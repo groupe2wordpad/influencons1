@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}{{ article.title }} — Influençons.com{% endblock %}
+{% block extra_css %}
+<style>
+  .article-hero { padding: 140px 60px 60px; max-width: 900px; margin: 0 auto; position: relative; z-index: 1; }
+  .article-tag { font-family: 'Cormorant Garamond', serif; font-size: 0.75rem; letter-spacing: 0.5em; color: var(--or); text-transform: uppercase; margin-bottom: 20px; display: block; }
+  .article-title { font-family: 'Cinzel', serif; font-size: clamp(1.8rem, 4vw, 3rem); color: var(--blanc); line-height: 1.2; margin-bottom: 20px; }
+  .article-meta { font-size: 0.85rem; color: rgba(250,247,242,0.4); letter-spacing: 0.1em; margin-bottom: 40px; }
+  .article-body { max-width: 760px; margin: 0 auto; padding: 0 60px 80px; position: relative; z-index: 1; }
+  .article-body p { font-size: 1.15rem; line-height: 1.9; color: rgba(250,247,242,0.8); margin-bottom: 24px; }
+  .article-body h2 { font-family: 'Cinzel', serif; font-size: 1.5rem; color: var(--or); margin: 40px 0 16px; }
+  .article-body h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--blanc); margin: 30px 0 12px; }
+  .article-body blockquote { border-left: 3px solid var(--or); padding: 16px 24px; margin: 30px 0; font-style: italic; color: rgba(250,247,242,0.65); background: rgba(212,160,23,0.05); }
+  .related-section { padding: 60px; max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
+</style>
+{% endblock %}
+{% block content %}
+<div class="article-hero">
+  <a href="{{ url_for('main.articles') }}" style="color:var(--or); text-decoration:none; font-size:0.8rem; letter-spacing:0.2em; text-transform:uppercase; display:inline-flex; align-items:center; gap:8px; margin-bottom:30px;">← Retour aux articles</a>
+  <span class="article-tag">{{ article.tag or 'Réflexion' }}</span>
+  <h1 class="article-title">{{ article.title }}</h1>
+  <p class="article-meta">{{ article.created_at.strftime('%d %B %Y') }}</p>
+  {% if article.image_url %}
+  <img src="{{ article.image_url }}" alt="{{ article.title }}" style="width:100%; height:400px; object-fit:cover; border:1px solid rgba(212,160,23,0.2);">
+  {% endif %}
+</div>
+<div class="article-body">
+  {{ article.content | safe }}
+</div>
+{% if recent %}
+<div class="full-divider"></div>
+<div class="related-section">
+  <span class="section-label">✦ Autres articles</span>
+  <div class="articles-grid">
+    {% for art in recent %}
+    <div class="article-card" onclick="window.location='{{ url_for('main.article', slug=art.slug) }}'">
+      <span class="card-tag">{{ art.tag or 'Réflexion' }}</span>
+      <h3 class="card-title">{{ art.title }}</h3>
+      <p class="card-excerpt">{{ art.excerpt or '' }}</p>
+      <a href="{{ url_for('main.article', slug=art.slug) }}" class="card-link">Lire →</a>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+{% endblock %}

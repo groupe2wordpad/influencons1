@@ -1,0 +1,48 @@
+{% extends 'admin/base.html' %}
+{% block page_title %}{% if item %}Modifier l'action{% else %}Nouvelle action de solidarité{% endif %}{% endblock %}
+{% block topbar_actions %}<a href="{{ url_for('admin.solidarite') }}" class="btn btn-ghost">← Retour</a>{% endblock %}
+{% block content %}
+<div class="form-card">
+  <form method="POST">
+    <div class="form-group">
+      <label>Titre de l'action *</label>
+      <input type="text" name="title" value="{{ item.title if item else '' }}" required placeholder="Lumière pour Abidjan...">
+    </div>
+    <div class="form-group">
+      <label>Description</label>
+      <textarea name="description" rows="4" placeholder="Décrivez cette action de solidarité...">{{ item.description if item else '' }}</textarea>
+    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Progression (%)</label>
+        <input type="number" name="progress" min="0" max="100" value="{{ item.progress if item else 0 }}" placeholder="67">
+      </div>
+      <div class="form-group">
+        <label>Type d'icône</label>
+        <select name="icon_type">
+          <option value="light" {% if item and item.icon_type == 'light' %}selected{% endif %}>🕯️ Lumière</option>
+          <option value="hands" {% if item and item.icon_type == 'hands' %}selected{% endif %}>🤝 Mains</option>
+          <option value="book" {% if item and item.icon_type == 'book' %}selected{% endif %}>📖 Livre</option>
+          <option value="heart" {% if item and item.icon_type == 'heart' %}selected{% endif %}>💛 Cœur</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="checkbox-wrap">
+        <input type="checkbox" name="is_featured" id="feat" {% if item and item.is_featured %}checked{% endif %}>
+        <label for="feat">Mise en avant (affichée en pleine largeur avec section bénévoles)</label>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="checkbox-wrap">
+        <input type="checkbox" name="is_active" id="active" {% if not item or item.is_active %}checked{% endif %}>
+        <label for="active">Action active (visible sur le site)</label>
+      </div>
+    </div>
+    <div style="display:flex; gap:12px;">
+      <button type="submit" class="btn btn-gold">{% if item %}💾 Enregistrer{% else %}✦ Créer l'action{% endif %}</button>
+      <a href="{{ url_for('admin.solidarite') }}" class="btn btn-ghost">Annuler</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

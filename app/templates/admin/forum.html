@@ -1,0 +1,36 @@
+{% extends 'admin/base.html' %}
+{% block page_title %}Forum{% endblock %}
+{% block topbar_actions %}<a href="{{ url_for('admin.forum_new') }}" class="btn btn-gold">+ Nouveau sujet</a>{% endblock %}
+{% block content %}
+<div class="table-wrap">
+  <div class="table-header"><h3>Sujets du forum ({{ items|length }})</h3></div>
+  <table>
+    <thead><tr><th>Titre</th><th>Catégorie</th><th>Auteur</th><th>Réponses</th><th>Statut</th><th>Actions</th></tr></thead>
+    <tbody>
+      {% for t in items %}
+      <tr>
+        <td>
+          {% if t.is_pinned %}<span class="badge badge-or" style="margin-right:6px;">📌</span>{% endif %}
+          {% if t.is_hot %}<span class="badge" style="margin-right:6px; color:#E08050; border-color:rgba(220,80,30,0.3);">🔥</span>{% endif %}
+          <strong>{{ t.title[:50] }}{% if t.title|length > 50 %}…{% endif %}</strong>
+        </td>
+        <td><span class="badge badge-or">{{ t.category or '—' }}</span></td>
+        <td style="color:var(--text-muted);">{{ t.author_name or '—' }}</td>
+        <td style="text-align:center; color:var(--or); font-family:'Cinzel',serif;">{{ t.reply_count }}</td>
+        <td><span class="badge {% if t.is_visible %}badge-success{% else %}badge-muted{% endif %}">{% if t.is_visible %}Visible{% else %}Masqué{% endif %}</span></td>
+        <td>
+          <div style="display:flex; gap:8px;">
+            <a href="{{ url_for('admin.forum_edit', id=t.id) }}" class="btn btn-ghost">✏️</a>
+            <form method="POST" action="{{ url_for('admin.forum_delete', id=t.id) }}" onsubmit="return confirm('Supprimer ?')">
+              <button type="submit" class="btn btn-danger">🗑️</button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="6" class="empty-state"><div class="icon">💬</div><p>Aucun sujet.</p></td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

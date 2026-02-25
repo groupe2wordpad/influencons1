@@ -1,0 +1,34 @@
+{% extends 'admin/base.html' %}
+{% block page_title %}Articles{% endblock %}
+{% block topbar_actions %}
+<a href="{{ url_for('admin.article_new') }}" class="btn btn-gold">+ Nouvel article</a>
+{% endblock %}
+{% block content %}
+<div class="table-wrap">
+  <div class="table-header"><h3>Tous les articles ({{ items|length }})</h3></div>
+  <table>
+    <thead><tr><th>Titre</th><th>Tag</th><th>Statut</th><th>Date</th><th>Actions</th></tr></thead>
+    <tbody>
+      {% for art in items %}
+      <tr>
+        <td><strong>{{ art.title }}</strong></td>
+        <td><span class="badge badge-or">{{ art.tag or '—' }}</span></td>
+        <td><span class="badge {% if art.is_published %}badge-success{% else %}badge-muted{% endif %}">{% if art.is_published %}Publié{% else %}Brouillon{% endif %}</span></td>
+        <td style="color:var(--text-muted); font-size:0.8rem;">{{ art.created_at.strftime('%d/%m/%Y') }}</td>
+        <td>
+          <div style="display:flex; gap:8px;">
+            <a href="{{ url_for('main.article', slug=art.slug) }}" class="btn btn-ghost" target="_blank" title="Voir">👁️</a>
+            <a href="{{ url_for('admin.article_edit', id=art.id) }}" class="btn btn-ghost">✏️ Éditer</a>
+            <form method="POST" action="{{ url_for('admin.article_delete', id=art.id) }}" onsubmit="return confirm('Supprimer cet article ?')">
+              <button type="submit" class="btn btn-danger">🗑️</button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5" class="empty-state"><div class="icon">📝</div><p>Aucun article. <a href="{{ url_for('admin.article_new') }}" style="color:var(--or);">Créer le premier</a></p></td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

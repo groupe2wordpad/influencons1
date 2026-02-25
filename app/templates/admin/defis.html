@@ -1,0 +1,30 @@
+{% extends 'admin/base.html' %}
+{% block page_title %}Défis{% endblock %}
+{% block topbar_actions %}<a href="{{ url_for('admin.defi_new') }}" class="btn btn-gold">+ Nouveau défi</a>{% endblock %}
+{% block content %}
+<div class="table-wrap">
+  <div class="table-header"><h3>Tous les défis ({{ items|length }})</h3></div>
+  <table>
+    <thead><tr><th>Titre</th><th>Statut</th><th>Date</th><th>Actions</th></tr></thead>
+    <tbody>
+      {% for d in items %}
+      <tr>
+        <td><strong>{{ d.title }}</strong></td>
+        <td><span class="badge {% if d.is_active %}badge-success{% else %}badge-muted{% endif %}">{% if d.is_active %}Actif{% else %}Inactif{% endif %}</span></td>
+        <td style="color:var(--text-muted); font-size:0.8rem;">{{ d.created_at.strftime('%d/%m/%Y') }}</td>
+        <td>
+          <div style="display:flex; gap:8px;">
+            <a href="{{ url_for('admin.defi_edit', id=d.id) }}" class="btn btn-ghost">✏️ Éditer</a>
+            <form method="POST" action="{{ url_for('admin.defi_delete', id=d.id) }}" onsubmit="return confirm('Supprimer ?')">
+              <button type="submit" class="btn btn-danger">🗑️</button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="4" class="empty-state"><div class="icon">🎯</div><p>Aucun défi. <a href="{{ url_for('admin.defi_new') }}" style="color:var(--or);">Créer le premier</a></p></td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

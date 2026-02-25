@@ -1,0 +1,49 @@
+{% extends 'admin/base.html' %}
+{% block page_title %}{% if item %}Modifier l'article{% else %}Nouvel article{% endif %}{% endblock %}
+{% block topbar_actions %}
+<a href="{{ url_for('admin.articles') }}" class="btn btn-ghost">← Retour</a>
+{% endblock %}
+{% block extra_css %}
+<style>
+  .editor-note { font-size: 0.75rem; color: var(--text-muted); margin-top: 6px; }
+</style>
+{% endblock %}
+{% block content %}
+<div class="form-card">
+  <form method="POST">
+    <div class="form-group">
+      <label>Titre de l'article *</label>
+      <input type="text" name="title" value="{{ item.title if item else '' }}" required placeholder="Mon article inspirant...">
+    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Tag / Catégorie</label>
+        <input type="text" name="tag" value="{{ item.tag if item else '' }}" placeholder="Foi & Vie, Amour du Prochain...">
+      </div>
+      <div class="form-group">
+        <label>URL de l'image (optionnel)</label>
+        <input type="text" name="image_url" value="{{ item.image_url if item else '' }}" placeholder="https://...">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Extrait (résumé court)</label>
+      <textarea name="excerpt" rows="3" placeholder="Un court résumé qui apparaîtra sur la carte...">{{ item.excerpt if item else '' }}</textarea>
+    </div>
+    <div class="form-group">
+      <label>Contenu de l'article (HTML supporté)</label>
+      <textarea name="content" rows="20" placeholder="<p>Votre article...</p>">{{ item.content if item else '' }}</textarea>
+      <p class="editor-note">💡 Vous pouvez utiliser du HTML : &lt;p&gt;, &lt;h2&gt;, &lt;h3&gt;, &lt;blockquote&gt;, &lt;strong&gt;, &lt;em&gt;</p>
+    </div>
+    <div class="form-group">
+      <div class="checkbox-wrap">
+        <input type="checkbox" name="is_published" id="pub" {% if not item or item.is_published %}checked{% endif %}>
+        <label for="pub">Publier immédiatement (décochez pour sauvegarder en brouillon)</label>
+      </div>
+    </div>
+    <div style="display:flex; gap:12px; margin-top:8px;">
+      <button type="submit" class="btn btn-gold">{% if item %}💾 Enregistrer{% else %}✦ Publier l'article{% endif %}</button>
+      <a href="{{ url_for('admin.articles') }}" class="btn btn-ghost">Annuler</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

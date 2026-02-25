@@ -1,0 +1,38 @@
+{% extends 'admin/base.html' %}
+{% block page_title %}Solidarité{% endblock %}
+{% block topbar_actions %}<a href="{{ url_for('admin.solidarite_new') }}" class="btn btn-gold">+ Nouvelle action</a>{% endblock %}
+{% block content %}
+<div class="table-wrap">
+  <div class="table-header"><h3>Actions de solidarité ({{ items|length }})</h3></div>
+  <table>
+    <thead><tr><th>Titre</th><th>Progression</th><th>Mise en avant</th><th>Statut</th><th>Actions</th></tr></thead>
+    <tbody>
+      {% for s in items %}
+      <tr>
+        <td><strong>{{ s.title }}</strong></td>
+        <td>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div style="width:80px; height:4px; background:rgba(255,255,255,0.1); border-radius:2px; overflow:hidden;">
+              <div style="width:{{ s.progress }}%; height:100%; background:linear-gradient(90deg,#6B3FA0,#D4A017);"></div>
+            </div>
+            <span style="font-size:0.8rem; color:var(--or);">{{ s.progress }}%</span>
+          </div>
+        </td>
+        <td><span class="badge {% if s.is_featured %}badge-or{% else %}badge-muted{% endif %}">{% if s.is_featured %}✦ Featured{% else %}Normal{% endif %}</span></td>
+        <td><span class="badge {% if s.is_active %}badge-success{% else %}badge-muted{% endif %}">{% if s.is_active %}Actif{% else %}Inactif{% endif %}</span></td>
+        <td>
+          <div style="display:flex; gap:8px;">
+            <a href="{{ url_for('admin.solidarite_edit', id=s.id) }}" class="btn btn-ghost">✏️ Éditer</a>
+            <form method="POST" action="{{ url_for('admin.solidarite_delete', id=s.id) }}" onsubmit="return confirm('Supprimer ?')">
+              <button type="submit" class="btn btn-danger">🗑️</button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5" class="empty-state"><div class="icon">🤝</div><p>Aucune action. <a href="{{ url_for('admin.solidarite_new') }}" style="color:var(--or);">Créer la première</a></p></td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

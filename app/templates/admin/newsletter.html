@@ -1,0 +1,37 @@
+{% extends 'admin/base.html' %}
+{% block page_title %}Newsletter{% endblock %}
+{% block content %}
+<div style="margin-bottom:20px; display:flex; align-items:center; gap:16px;">
+  <div class="stat-card" style="display:inline-block; padding:16px 24px;">
+    <div class="num">{{ active_count }}</div>
+    <div class="label">abonnés actifs</div>
+  </div>
+</div>
+<div class="table-wrap">
+  <div class="table-header"><h3>Tous les abonnés ({{ items|length }})</h3></div>
+  <table>
+    <thead><tr><th>Email</th><th>Date d'inscription</th><th>Statut</th><th>Actions</th></tr></thead>
+    <tbody>
+      {% for sub in items %}
+      <tr>
+        <td>{{ sub.email }}</td>
+        <td style="color:var(--text-muted); font-size:0.8rem;">{{ sub.created_at.strftime('%d/%m/%Y à %H:%M') }}</td>
+        <td><span class="badge {% if sub.is_active %}badge-success{% else %}badge-muted{% endif %}">{% if sub.is_active %}Actif{% else %}Désabonné{% endif %}</span></td>
+        <td>
+          <div style="display:flex; gap:8px;">
+            <form method="POST" action="{{ url_for('admin.newsletter_toggle', id=sub.id) }}">
+              <button type="submit" class="btn btn-ghost">{% if sub.is_active %}⏸️ Désactiver{% else %}▶️ Réactiver{% endif %}</button>
+            </form>
+            <form method="POST" action="{{ url_for('admin.newsletter_delete', id=sub.id) }}" onsubmit="return confirm('Supprimer définitivement ?')">
+              <button type="submit" class="btn btn-danger">🗑️</button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="4" class="empty-state"><div class="icon">📧</div><p>Aucun abonné pour l'instant.</p></td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

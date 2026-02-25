@@ -1,0 +1,231 @@
+{% extends 'base.html' %}
+{% block title %}Influençons.com — Influençons Autrement{% endblock %}
+{% block extra_css %}
+<style>
+  .hero { position: relative; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 100px 40px 60px; z-index: 1; }
+  .hero-ornement { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(ellipse 70% 55% at 50% 38%, rgba(107,63,160,0.35) 0%, transparent 70%), radial-gradient(ellipse 35% 35% at 50% 32%, rgba(212,160,23,0.18) 0%, transparent 55%); pointer-events: none; }
+  .flame-container { position: relative; width: 80px; height: 110px; margin: 0 auto 30px; }
+  .flame { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 50px; height: 80px; background: radial-gradient(ellipse at 50% 100%, #FFF176 0%, #F0C040 30%, #D4A017 60%, #8B4513 90%, transparent 100%); border-radius: 50% 50% 35% 35%; animation: flicker 2s ease-in-out infinite alternate; filter: drop-shadow(0 0 22px rgba(212,160,23,0.95)) drop-shadow(0 0 50px rgba(212,160,23,0.5)); }
+  .flame::before { content: ''; position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); width: 25px; height: 45px; background: radial-gradient(ellipse at 50% 100%, #FFF8DC 0%, rgba(240,192,64,0.6) 60%, transparent 100%); border-radius: 50% 50% 35% 35%; }
+  .cross-icon { position: absolute; top: 0; left: 50%; transform: translateX(-50%); font-size: 1.3rem; color: #fff; filter: drop-shadow(0 0 8px rgba(255,220,80,1)); z-index: 2; animation: crossGlow 2.5s ease-in-out infinite alternate; }
+  @keyframes crossGlow { from { filter: drop-shadow(0 0 6px rgba(255,230,100,0.8)); } to { filter: drop-shadow(0 0 14px rgba(255,250,150,1)); } }
+  @keyframes flicker { 0% { transform: translateX(-50%) scaleX(1) rotate(-1deg); } 100% { transform: translateX(-50%) scaleX(1.02) scaleY(0.98) rotate(-0.5deg); } }
+  .hero-subtitle { font-family: 'Cormorant Garamond', serif; font-size: 0.85rem; letter-spacing: 0.4em; color: var(--or); text-transform: uppercase; margin-bottom: 20px; animation: fadeUp 1s 0.3s both; }
+  .hero-title { font-family: 'Cinzel', serif; font-size: clamp(2.8rem, 7vw, 5.5rem); font-weight: 700; line-height: 1.05; background: linear-gradient(135deg, var(--or-pale) 0%, var(--or) 50%, #C8860A 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 12px; animation: fadeUp 1s 0.5s both; }
+  .hero-title-dot { color: var(--violet-moyen); -webkit-text-fill-color: var(--violet-moyen); }
+  .hero-verse { font-family: 'Playfair Display', serif; font-style: italic; font-size: clamp(1.25rem, 3vw, 2rem); color: #fff; margin-bottom: 10px; line-height: 1.4; animation: fadeUp 1s 0.7s both; text-shadow: 0 0 40px rgba(212,160,23,0.4); }
+  .hero-verse strong { background: linear-gradient(135deg, #fff9c4, var(--or-clair)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-style: normal; font-weight: 700; }
+  .hero-verse-ref { font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.35em; color: rgba(212,160,23,0.6); text-transform: uppercase; margin-bottom: 36px; animation: fadeUp 1s 0.85s both; display: block; }
+  .hero-cta { display: inline-flex; align-items: center; gap: 12px; padding: 14px 40px; border: 1px solid var(--or); color: var(--or); font-family: 'Cinzel', serif; font-size: 0.8rem; letter-spacing: 0.25em; text-transform: uppercase; text-decoration: none; transition: all 0.4s; position: relative; overflow: hidden; animation: fadeUp 1s 0.9s both; }
+  .hero-cta::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(212,160,23,0.15), transparent); transition: left 0.5s; }
+  .hero-cta:hover::before { left: 100%; }
+  .hero-cta:hover { background: rgba(212,160,23,0.1); box-shadow: 0 0 30px rgba(212,160,23,0.25); }
+  .scroll-indicator { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0.5; animation: bounce 2s ease-in-out infinite; }
+  .scroll-indicator span { font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--or); }
+  .scroll-line { width: 1px; height: 40px; background: linear-gradient(to bottom, var(--or), transparent); }
+  @keyframes bounce { 0%, 100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(8px); } }
+  .newsletter-section::before { content: '✦'; display: block; font-size: 2rem; color: var(--or); opacity: 0.5; margin-bottom: 30px; animation: spin 8s linear infinite; }
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  .defi-number { font-family: 'Cinzel', serif; font-size: 8rem; font-weight: 700; line-height: 1; background: linear-gradient(135deg, rgba(212,160,23,0.15), rgba(212,160,23,0.05)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; position: absolute; top: 20px; right: 30px; }
+</style>
+{% endblock %}
+{% block content %}
+
+<!-- HERO -->
+<section class="hero" style="max-width:100%; padding-top:120px;">
+  <div class="hero-ornement"></div>
+  <div class="flame-container">
+    <span class="cross-icon">✝</span>
+    <div class="flame"></div>
+  </div>
+  <span class="hero-subtitle">✦ Influençons Autrement ✦</span>
+  <h1 class="hero-title">Influençons<span class="hero-title-dot">.</span></h1>
+  <p class="hero-verse">
+    « Vous êtes la <strong>lumière du monde</strong>.<br>
+    Une ville située sur une montagne ne peut être cachée. »
+  </p>
+  <span class="hero-verse-ref">Matthieu 5 : 14</span>
+  <a href="{{ url_for('main.articles') }}" class="hero-cta">Découvrir le blog ✦</a>
+  <div class="scroll-indicator">
+    <span>Défiler</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<div class="full-divider"></div>
+
+<!-- ARTICLES -->
+<section>
+  <span class="section-label">✦ Réflexions & Inspirations</span>
+  <h2 class="section-title">Derniers Articles</h2>
+  <p class="section-desc">Des textes pour nourrir l'âme, questionner le regard et grandir dans la bienveillance au quotidien.</p>
+  <div class="articles-grid">
+    {% for art in articles %}
+    <div class="article-card" onclick="window.location='{{ url_for('main.article', slug=art.slug) }}'">
+      <span class="card-tag">{{ art.tag or 'Réflexion' }}</span>
+      <h3 class="card-title">{{ art.title }}</h3>
+      <p class="card-excerpt">{{ art.excerpt or '' }}</p>
+      <a href="{{ url_for('main.article', slug=art.slug) }}" class="card-link">Lire l'article →</a>
+    </div>
+    {% else %}
+    <div class="article-card" style="grid-column:span 3; text-align:center; opacity:0.5;">
+      <p>Les premiers articles arrivent bientôt... ✦</p>
+    </div>
+    {% endfor %}
+  </div>
+  {% if articles %}
+  <div style="text-align:center; margin-top:40px;">
+    <a href="{{ url_for('main.articles') }}" class="btn-outline">Voir tous les articles</a>
+  </div>
+  {% endif %}
+</section>
+
+<div class="full-divider"></div>
+
+<!-- DÉFI -->
+{% if defi %}
+<div class="defi-section" id="defis">
+  <span class="defi-number">01</span>
+  <div>
+    <span class="defi-badge">✦ Défi du moment</span>
+    <h2 class="defi-title">{{ defi.title }}</h2>
+    <p class="defi-text">{{ defi.description }}</p>
+    <div class="defi-actions">
+      <a href="#" class="btn-primary">Je relève le défi</a>
+      <a href="#" class="btn-outline">Voir tous les défis</a>
+    </div>
+  </div>
+  <div class="defi-visual">
+    {% if defi.step1_title %}
+    <div class="defi-step">
+      <span class="step-num">01</span>
+      <div class="step-text"><strong>{{ defi.step1_title }}</strong><span>{{ defi.step1_desc }}</span></div>
+    </div>
+    {% endif %}
+    {% if defi.step2_title %}
+    <div class="defi-step">
+      <span class="step-num">02</span>
+      <div class="step-text"><strong>{{ defi.step2_title }}</strong><span>{{ defi.step2_desc }}</span></div>
+    </div>
+    {% endif %}
+    {% if defi.step3_title %}
+    <div class="defi-step">
+      <span class="step-num">03</span>
+      <div class="step-text"><strong>{{ defi.step3_title }}</strong><span>{{ defi.step3_desc }}</span></div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+<div class="full-divider"></div>
+{% endif %}
+
+<!-- SOLIDARITÉ -->
+<section id="solidarite">
+  <span class="section-label">✦ Agir ensemble</span>
+  <h2 class="section-title">Solidarité</h2>
+  <p class="section-desc">Des actions concrètes pour toucher des vies. Ensemble, nous pouvons faire une différence durable.</p>
+  <div class="solidarite-grid">
+    {% for action in solidarite %}
+    <div class="solidarite-card {% if action.is_featured %}featured{% endif %}">
+      <div>
+        <div class="solidarite-icon">
+          {% if action.icon_type == 'light' %}🕯️{% elif action.icon_type == 'hands' %}🤝{% elif action.icon_type == 'book' %}📖{% else %}💛{% endif %}
+        </div>
+        <h3>{{ action.title }}</h3>
+        <p>{{ action.description }}</p>
+        {% if action.progress %}
+        <div class="progress-bar-wrap">
+          <div class="progress-label"><span>Progression</span><span>{{ action.progress }}%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:{{ action.progress }}%"></div></div>
+        </div>
+        <a href="#" class="btn-primary" style="margin-top:16px; display:inline-block;">Soutenir cette action</a>
+        {% else %}
+        <a href="#" class="card-link">En savoir plus →</a>
+        {% endif %}
+      </div>
+      {% if action.is_featured %}
+      <div>
+        <div class="solidarite-icon">🤝</div>
+        <h3>Rejoindre les bénévoles</h3>
+        <p>Vous avez du temps, une compétence ou une envie de servir ? Nous avons besoin de vous.</p>
+        <a href="#" class="card-link">Devenir bénévole →</a>
+      </div>
+      {% endif %}
+    </div>
+    {% else %}
+    <div class="solidarite-card" style="grid-column:span 2; text-align:center; opacity:0.5;">
+      <p>Les actions de solidarité arrivent bientôt... ✦</p>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<div class="full-divider"></div>
+
+<!-- FORUM -->
+<section id="forum">
+  <span class="section-label">✦ Communauté & Échanges</span>
+  <h2 class="section-title">Forum</h2>
+  <p class="section-desc">Un espace pour poser vos questions, partager vos préoccupations et grandir ensemble.</p>
+  <div class="forum-toolbar">
+    <div class="forum-search">
+      <span>⌕</span>
+      <input type="text" placeholder="Rechercher un sujet…">
+    </div>
+  </div>
+  <div class="forum-categories">
+    <button class="forum-cat active">Tous</button>
+    <button class="forum-cat">Foi & Questions</button>
+    <button class="forum-cat">Témoignages</button>
+    <button class="forum-cat">Solidarité</button>
+    <button class="forum-cat">Défis</button>
+  </div>
+  <div class="forum-list">
+    {% for topic in topics %}
+    <div class="forum-topic {% if topic.is_pinned %}pinned{% endif %}">
+      <div class="topic-icon">{% if topic.is_pinned %}📌{% elif topic.is_hot %}✨{% else %}💬{% endif %}</div>
+      <div class="topic-body">
+        <div class="topic-meta">
+          {% if topic.is_pinned %}<span class="topic-badge pin">Épinglé</span>{% endif %}
+          {% if topic.category %}<span class="topic-badge cat">{{ topic.category }}</span>{% endif %}
+          {% if topic.is_hot %}<span class="topic-badge hot">🔥 Populaire</span>{% endif %}
+        </div>
+        <h3 class="topic-title">{{ topic.title }}</h3>
+        <p class="topic-excerpt">{{ topic.excerpt or '' }}</p>
+        <div class="topic-footer">
+          <span class="topic-author">{{ topic.author_name or 'Anonyme' }}</span>
+          <span class="topic-dot">·</span>
+          <span class="topic-date">{{ topic.created_at.strftime('%d/%m/%Y') }}</span>
+          <span class="topic-dot">·</span>
+          <span class="topic-replies">{{ topic.reply_count }} réponses</span>
+        </div>
+      </div>
+      <div class="topic-stats">
+        <span class="stat-num">{{ topic.reply_count }}</span>
+        <span class="stat-label">réponses</span>
+      </div>
+    </div>
+    {% else %}
+    <div style="text-align:center; padding:40px; opacity:0.5;">
+      <p>Le forum ouvrira bientôt... ✦</p>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<div class="full-divider"></div>
+
+<!-- NEWSLETTER -->
+<div class="newsletter-section" id="newsletter">
+  <span class="section-label" style="display:block; text-align:center;">✦ Restez inspiré(e)</span>
+  <h2 class="section-title">Recevez la lumière<br>chaque semaine</h2>
+  <p class="section-desc" style="max-width:100%; text-align:center; margin-bottom:0;">Articles, défis et nouvelles de la communauté directement dans votre boîte mail.</p>
+  <form class="newsletter-form" method="POST" action="{{ url_for('main.newsletter_subscribe') }}">
+    <input type="hidden" name="csrf_token" value="">
+    <input type="email" name="email" placeholder="Votre adresse email…" required>
+    <button type="submit">S'abonner</button>
+  </form>
+  <p class="newsletter-note">✦ Aucun spam. Désabonnement en un clic.</p>
+</div>
+
+{% endblock %}

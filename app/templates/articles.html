@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Articles — Influençons.com{% endblock %}
+{% block content %}
+<section style="padding-top:120px;">
+  <span class="section-label">✦ Réflexions & Inspirations</span>
+  <h2 class="section-title">Tous les Articles</h2>
+  <p class="section-desc">Des textes pour nourrir l'âme, questionner le regard et grandir dans la bienveillance.</p>
+  <div class="articles-grid">
+    {% for art in articles.items %}
+    <div class="article-card" onclick="window.location='{{ url_for('main.article', slug=art.slug) }}'">
+      <span class="card-tag">{{ art.tag or 'Réflexion' }}</span>
+      <h3 class="card-title">{{ art.title }}</h3>
+      <p class="card-excerpt">{{ art.excerpt or '' }}</p>
+      <span style="font-size:0.8rem; color:rgba(250,247,242,0.3); margin-bottom:16px; display:block;">{{ art.created_at.strftime('%d/%m/%Y') }}</span>
+      <a href="{{ url_for('main.article', slug=art.slug) }}" class="card-link">Lire l'article →</a>
+    </div>
+    {% else %}
+    <div class="article-card" style="grid-column:span 3; text-align:center; opacity:0.5;">
+      <p>Les premiers articles arrivent bientôt... ✦</p>
+    </div>
+    {% endfor %}
+  </div>
+  {% if articles.pages > 1 %}
+  <div style="display:flex; justify-content:center; gap:12px; margin-top:50px;">
+    {% for p in articles.iter_pages() %}
+      {% if p %}
+        <a href="{{ url_for('main.articles', page=p) }}" style="padding:8px 16px; border:1px solid {% if p == articles.page %}var(--or){% else %}rgba(212,160,23,0.3){% endif %}; color:{% if p == articles.page %}var(--or){% else %}rgba(250,247,242,0.5){% endif %}; text-decoration:none; font-family:'Cinzel',serif; font-size:0.8rem;">{{ p }}</a>
+      {% else %}
+        <span style="color:rgba(250,247,242,0.3); padding:8px;">…</span>
+      {% endif %}
+    {% endfor %}
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends 'admin/base.html' %}
+{% block page_title %}{% if item %}Modifier le sujet{% else %}Nouveau sujet forum{% endif %}{% endblock %}
+{% block topbar_actions %}<a href="{{ url_for('admin.forum') }}" class="btn btn-ghost">← Retour</a>{% endblock %}
+{% block content %}
+<div class="form-card">
+  <form method="POST">
+    <div class="form-group">
+      <label>Titre du sujet *</label>
+      <input type="text" name="title" value="{{ item.title if item else '' }}" required placeholder="Comment garder la foi dans les moments difficiles ?">
+    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Catégorie</label>
+        <select name="category">
+          <option value="" {% if not item or not item.category %}selected{% endif %}>— Choisir —</option>
+          <option value="Foi & Questions" {% if item and item.category == 'Foi & Questions' %}selected{% endif %}>Foi & Questions</option>
+          <option value="Témoignages" {% if item and item.category == 'Témoignages' %}selected{% endif %}>Témoignages</option>
+          <option value="Solidarité" {% if item and item.category == 'Solidarité' %}selected{% endif %}>Solidarité</option>
+          <option value="Défis" {% if item and item.category == 'Défis' %}selected{% endif %}>Défis</option>
+          <option value="Annonce" {% if item and item.category == 'Annonce' %}selected{% endif %}>Annonce</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Auteur</label>
+        <input type="text" name="author_name" value="{{ item.author_name if item else '' }}" placeholder="Marie A.">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Extrait</label>
+      <textarea name="excerpt" rows="3" placeholder="Un bref aperçu du sujet...">{{ item.excerpt if item else '' }}</textarea>
+    </div>
+    <div class="form-group">
+      <label>Nombre de réponses</label>
+      <input type="number" name="reply_count" min="0" value="{{ item.reply_count if item else 0 }}">
+    </div>
+    <div style="display:flex; gap:24px; margin-bottom:20px; flex-wrap:wrap;">
+      <div class="checkbox-wrap">
+        <input type="checkbox" name="is_pinned" id="pin" {% if item and item.is_pinned %}checked{% endif %}>
+        <label for="pin">📌 Épingler ce sujet</label>
+      </div>
+      <div class="checkbox-wrap">
+        <input type="checkbox" name="is_hot" id="hot" {% if item and item.is_hot %}checked{% endif %}>
+        <label for="hot">🔥 Marquer comme populaire</label>
+      </div>
+      <div class="checkbox-wrap">
+        <input type="checkbox" name="is_visible" id="vis" {% if not item or item.is_visible %}checked{% endif %}>
+        <label for="vis">Visible sur le site</label>
+      </div>
+    </div>
+    <div style="display:flex; gap:12px;">
+      <button type="submit" class="btn btn-gold">{% if item %}💾 Enregistrer{% else %}✦ Créer le sujet{% endif %}</button>
+      <a href="{{ url_for('admin.forum') }}" class="btn btn-ghost">Annuler</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

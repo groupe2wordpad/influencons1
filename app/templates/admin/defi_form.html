@@ -1,0 +1,54 @@
+{% extends 'admin/base.html' %}
+{% block page_title %}{% if item %}Modifier le défi{% else %}Nouveau défi{% endif %}{% endblock %}
+{% block topbar_actions %}<a href="{{ url_for('admin.defis') }}" class="btn btn-ghost">← Retour</a>{% endblock %}
+{% block content %}
+<div class="form-card">
+  <form method="POST">
+    <div class="form-group">
+      <label>Titre du défi *</label>
+      <input type="text" name="title" value="{{ item.title if item else '' }}" required placeholder="7 jours pour influencer autrement...">
+    </div>
+    <div class="form-group">
+      <label>Description</label>
+      <textarea name="description" rows="4" placeholder="Décrivez le défi...">{{ item.description if item else '' }}</textarea>
+    </div>
+    <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:16px; text-transform:uppercase; letter-spacing:0.1em;">✦ Les 3 étapes du défi</p>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Étape 1 — Titre</label>
+        <input type="text" name="step1_title" value="{{ item.step1_title if item else '' }}" placeholder="Identifier">
+      </div>
+      <div class="form-group">
+        <label>Étape 1 — Description</label>
+        <input type="text" name="step1_desc" value="{{ item.step1_desc if item else '' }}" placeholder="Une personne autour de vous...">
+      </div>
+      <div class="form-group">
+        <label>Étape 2 — Titre</label>
+        <input type="text" name="step2_title" value="{{ item.step2_title if item else '' }}" placeholder="Agir">
+      </div>
+      <div class="form-group">
+        <label>Étape 2 — Description</label>
+        <input type="text" name="step2_desc" value="{{ item.step2_desc if item else '' }}" placeholder="Un geste concret chaque jour...">
+      </div>
+      <div class="form-group">
+        <label>Étape 3 — Titre</label>
+        <input type="text" name="step3_title" value="{{ item.step3_title if item else '' }}" placeholder="Témoigner">
+      </div>
+      <div class="form-group">
+        <label>Étape 3 — Description</label>
+        <input type="text" name="step3_desc" value="{{ item.step3_desc if item else '' }}" placeholder="Partager votre expérience...">
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="checkbox-wrap">
+        <input type="checkbox" name="is_active" id="active" {% if not item or item.is_active %}checked{% endif %}>
+        <label for="active">Défi actif (affiché sur le site)</label>
+      </div>
+    </div>
+    <div style="display:flex; gap:12px;">
+      <button type="submit" class="btn btn-gold">{% if item %}💾 Enregistrer{% else %}✦ Créer le défi{% endif %}</button>
+      <a href="{{ url_for('admin.defis') }}" class="btn btn-ghost">Annuler</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
