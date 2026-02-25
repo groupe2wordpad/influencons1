@@ -5,11 +5,17 @@
   .hero { position: relative; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 100px 40px 60px; z-index: 1; }
   .hero-ornement { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(ellipse 70% 55% at 50% 38%, rgba(107,63,160,0.35) 0%, transparent 70%), radial-gradient(ellipse 35% 35% at 50% 32%, rgba(212,160,23,0.18) 0%, transparent 55%); pointer-events: none; }
   .flame-container { position: relative; width: 80px; height: 110px; margin: 0 auto 30px; }
-  .flame { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 50px; height: 80px; background: radial-gradient(ellipse at 50% 100%, #FFF176 0%, #F0C040 30%, #D4A017 60%, #8B4513 90%, transparent 100%); border-radius: 50% 50% 35% 35%; animation: flicker 2s ease-in-out infinite alternate; filter: drop-shadow(0 0 22px rgba(212,160,23,0.95)) drop-shadow(0 0 50px rgba(212,160,23,0.5)); }
+  .flame { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 50px; height: 80px; background: radial-gradient(ellipse at 50% 100%, #FFF176 0%, #F0C040 30%, #D4A017 60%, #8B4513 90%, transparent 100%); border-radius: 50% 50% 35% 35%; animation: flicker 1.5s ease-in-out infinite alternate; filter: drop-shadow(0 0 22px rgba(212,160,23,0.95)) drop-shadow(0 0 50px rgba(212,160,23,0.5)); }
   .flame::before { content: ''; position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); width: 25px; height: 45px; background: radial-gradient(ellipse at 50% 100%, #FFF8DC 0%, rgba(240,192,64,0.6) 60%, transparent 100%); border-radius: 50% 50% 35% 35%; }
+  .flame::after { content: ''; position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%); width: 15px; height: 30px; background: radial-gradient(ellipse at 50% 100%, #ffffff 0%, rgba(255,248,220,0.8) 50%, transparent 100%); border-radius: 50% 50% 35% 35%; animation: flicker-inner 1.2s ease-in-out infinite alternate; }
   .cross-icon { position: absolute; top: 0; left: 50%; transform: translateX(-50%); font-size: 1.3rem; color: #fff; filter: drop-shadow(0 0 8px rgba(255,220,80,1)); z-index: 2; animation: crossGlow 2.5s ease-in-out infinite alternate; }
   @keyframes crossGlow { from { filter: drop-shadow(0 0 6px rgba(255,230,100,0.8)); } to { filter: drop-shadow(0 0 14px rgba(255,250,150,1)); } }
-  @keyframes flicker { 0% { transform: translateX(-50%) scaleX(1) rotate(-1deg); } 100% { transform: translateX(-50%) scaleX(1.02) scaleY(0.98) rotate(-0.5deg); } }
+  @keyframes flicker { 0% { transform: translateX(-50%) scaleX(1) rotate(-1.5deg) scaleY(1); filter: drop-shadow(0 0 18px rgba(212,160,23,0.9)) drop-shadow(0 0 40px rgba(212,160,23,0.4)); } 50% { transform: translateX(-50%) scaleX(0.97) rotate(0.5deg) scaleY(1.03); filter: drop-shadow(0 0 28px rgba(255,180,0,1)) drop-shadow(0 0 60px rgba(212,160,23,0.6)); } 100% { transform: translateX(-50%) scaleX(1.02) scaleY(0.97) rotate(-0.5deg); filter: drop-shadow(0 0 22px rgba(212,160,23,0.95)) drop-shadow(0 0 50px rgba(212,160,23,0.5)); } }
+  @keyframes flicker-inner { 0% { transform: translateX(-50%) scaleX(1) rotate(1deg); opacity: 0.9; } 100% { transform: translateX(-50%) scaleX(0.95) rotate(-0.5deg); opacity: 0.6; } }
+  /* Stars */
+  .stars-container { position: absolute; top: 0; left: 0; right: 0; bottom: 0; overflow: hidden; pointer-events: none; }
+  .star { position: absolute; border-radius: 50%; background: #fff; animation: twinkle var(--dur, 2s) ease-in-out infinite alternate; opacity: 0; }
+  @keyframes twinkle { 0% { opacity: 0; transform: scale(0.5); } 50% { opacity: var(--max-op, 0.9); transform: scale(1.2); } 100% { opacity: 0.2; transform: scale(0.8); } }
   .hero-subtitle { font-family: 'Cormorant Garamond', serif; font-size: 0.85rem; letter-spacing: 0.4em; color: var(--or); text-transform: uppercase; margin-bottom: 20px; animation: fadeUp 1s 0.3s both; }
   .hero-title { font-family: 'Cinzel', serif; font-size: clamp(2.8rem, 7vw, 5.5rem); font-weight: 700; line-height: 1.05; background: linear-gradient(135deg, var(--or-pale) 0%, var(--or) 50%, #C8860A 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 12px; animation: fadeUp 1s 0.5s both; }
   .hero-title-dot { color: var(--violet-moyen); -webkit-text-fill-color: var(--violet-moyen); }
@@ -34,6 +40,7 @@
 <!-- HERO -->
 <section class="hero" style="max-width:100%; padding-top:120px;">
   <div class="hero-ornement"></div>
+  <div class="stars-container" id="starsContainer"></div>
   <div class="flame-container">
     <span class="cross-icon">✝</span>
     <div class="flame"></div>
@@ -91,8 +98,8 @@
     <h2 class="defi-title">{{ defi.title }}</h2>
     <p class="defi-text">{{ defi.description }}</p>
     <div class="defi-actions">
-      <a href="#" class="btn-primary">Je relève le défi</a>
-      <a href="#" class="btn-outline">Voir tous les défis</a>
+      <a href="#defis" class="btn-primary" onclick="this.closest('.defi-section').querySelector('.defi-step') && window.scrollTo({top: document.getElementById('defis').offsetTop, behavior:'smooth'}); return false;">Je relève le défi</a>
+      <a href="#defis" class="btn-outline">Voir tous les défis</a>
     </div>
   </div>
   <div class="defi-visual">
@@ -227,5 +234,23 @@
   </form>
   <p class="newsletter-note">✦ Aucun spam. Désabonnement en un clic.</p>
 </div>
+
+<script>
+(function() {
+  const container = document.getElementById('starsContainer');
+  if (!container) return;
+  for (let i = 0; i < 80; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    const size = Math.random() * 3 + 1;
+    const dur = (Math.random() * 3 + 1.5).toFixed(2);
+    const delay = (Math.random() * 4).toFixed(2);
+    const maxOp = (Math.random() * 0.5 + 0.5).toFixed(2);
+    const isGolden = Math.random() < 0.25;
+    star.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--dur:${dur}s;--max-op:${maxOp};animation-delay:${delay}s;background:${isGolden?'rgba(212,160,23,0.9)':'#fff'};box-shadow:0 0 ${size*2}px ${isGolden?'rgba(212,160,23,0.8)':'rgba(255,255,255,0.8)'};`;
+    container.appendChild(star);
+  }
+})();
+</script>
 
 {% endblock %}
