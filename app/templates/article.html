@@ -3,16 +3,131 @@
 {% block title %}{{ article.title }} — Influençons.com{% endblock %}
 {% block extra_css %}
 <style>
-  .article-hero { padding: 140px 60px 60px; max-width: 900px; margin: 0 auto; position: relative; z-index: 1; }
-  .article-tag { font-family: 'Cormorant Garamond', serif; font-size: 0.75rem; letter-spacing: 0.5em; color: var(--or); text-transform: uppercase; margin-bottom: 20px; display: block; }
-  .article-title { font-family: 'Cinzel', serif; font-size: clamp(1.8rem, 4vw, 3rem); color: var(--texte-sombre); line-height: 1.2; margin-bottom: 20px; }
-  .article-meta { font-size: 0.85rem; color: var(--texte-leger); letter-spacing: 0.1em; margin-bottom: 40px; }
-  .article-body { max-width: 760px; margin: 0 auto; padding: 0 60px 80px; position: relative; z-index: 1; }
-  .article-body p { font-size: 1.15rem; line-height: 1.9; color: var(--texte-moyen); margin-bottom: 24px; }
-  .article-body h2 { font-family: 'Cinzel', serif; font-size: 1.5rem; color: var(--or); margin: 40px 0 16px; }
-  .article-body h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--texte-sombre); margin: 30px 0 12px; }
-  .article-body blockquote { border-left: 3px solid var(--or); padding: 16px 24px; margin: 30px 0; font-style: italic; color: var(--texte-moyen); background: rgba(212,160,23,0.07); }
-  .related-section { padding: 60px; max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
+/* =========================
+   HERO ARTICLE
+========================= */
+.article-hero {
+  padding: 160px 60px 70px;
+  max-width: 900px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+.article-tag {
+  font-size: 0.7rem;
+  letter-spacing: 0.45em;
+  color: var(--or);
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  display: inline-block;
+  opacity: 0.8;
+}
+
+.article-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  color: var(--texte-sombre);
+  line-height: 1.25;
+  margin-bottom: 24px;
+}
+
+.article-meta {
+  font-size: 0.8rem;
+  color: var(--texte-leger);
+  letter-spacing: 0.12em;
+  margin-bottom: 50px;
+  text-transform: uppercase;
+}
+
+/* =========================
+   CORPS ARTICLE
+========================= */
+.article-body {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 40px 100px;
+  position: relative;
+  z-index: 1;
+}
+
+.article-body p {
+  font-size: 1.15rem;
+  line-height: 2;
+  color: var(--texte-moyen);
+  margin-bottom: 26px;
+}
+
+/* Titres de section */
+.article-body h2 {
+  font-family: 'Cinzel', serif;
+  font-size: 1.6rem;
+  color: var(--violet);
+  margin: 50px 0 20px;
+  position: relative;
+}
+
+.article-body h2::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 2px;
+  margin-top: 10px;
+  background: linear-gradient(to right, var(--or), transparent);
+}
+
+.article-body h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.25rem;
+  color: var(--texte-sombre);
+  margin: 35px 0 14px;
+}
+
+/* Mise en valeur citation */
+.article-body blockquote {
+  border-left: 3px solid var(--or);
+  padding: 20px 28px;
+  margin: 40px 0;
+  font-style: italic;
+  font-size: 1.1rem;
+  color: var(--texte-moyen);
+  background: var(--creme-doux);
+  border-radius: 6px;
+  box-shadow: 0 4px 18px rgba(200,166,70,0.08);
+}
+
+/* Liens dans article */
+.article-body a {
+  color: var(--violet);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(124,90,184,0.4);
+  transition: 0.3s;
+}
+
+.article-body a:hover {
+  color: var(--or);
+  border-color: var(--or);
+}
+
+/* =========================
+   SECTION ARTICLES RELIÉS
+========================= */
+.related-section {
+  padding: 80px 60px;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.related-section h2 {
+  font-family: 'Cinzel', serif;
+  font-size: 1.8rem;
+  color: var(--texte-sombre);
+  margin-bottom: 40px;
+  text-align: center;
+}
 </style>
 {% endblock %}
 {% block content %}
