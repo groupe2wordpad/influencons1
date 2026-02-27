@@ -4,276 +4,136 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{% block title %}Influençons.com — Influençons Autrement{% endblock %}</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:wght@300;400;600&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cinzel:wght@400;600;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
 <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='img/favicon_32x32.png') }}">
 <link rel="icon" type="image/png" sizes="64x64" href="{{ url_for('static', filename='img/favicon_64x64.png') }}">
 <style>
 :root {
-  /* OR plus doux */
-  --or: #C8A646;
-  --or-clair: #E6C873;
-  --or-pale: #F5E6B3;
-
-  /* Violet modernisé */
-  --violet: #5B3C88;
-  --violet-profond: #3E2563;
-  --violet-moyen: #7C5AB8;
-
-  /* Fonds sombres (accueil) */
-  --fond: #140C1F;
-  --fond2: #1B112B;
-
-  /* Clair */
-  --blanc: #FCFAF6;
-  --creme: #FFFFFF;
-  --creme-doux: #F7F2EB;
-  --creme-bord: rgba(200,166,70,0.25);
-
-  /* Textes */
-  --texte-sombre: #2C1F14;
-  --texte-moyen: #5E4A3A;
-  --texte-leger: #9A7F68;
-
-  /* Fond page claire */
-  --fond-clair: #F4EFE8;
+  --violet: #4B2E83;
+  --or: #D4AF37;
+  --or-clair: #F3E1A3;
+  --blanc: #ffffff;
+  --gris-fonce: #1c1c1c;
+  --gris-clair: #f5f5f5;
+  --radius: 12px;
+  --transition: 0.35s ease;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+* { margin:0; padding:0; box-sizing:border-box; }
 
-/* =========================
-   ACCUEIL (SOMBRE MAIS DOUX)
-========================= */
+/* BODY */
 body {
-  background: linear-gradient(
-    180deg,
-    #140C1F 0%,
-    #1B112B 40%,
-    #241535 70%,
-    #2A183D 100%
-  );
-  background-attachment: fixed;
-  color: var(--blanc);
-  font-family: 'Cormorant Garamond', serif;
-  overflow-x: hidden;
+  font-family: 'Poppins', sans-serif;
+  color: var(--gris-fonce);
+  background: #fff;
+  overflow-x:hidden;
 }
 
-/* =========================
-   NAVIGATION
-========================= */
+/* NAVIGATION */
 nav {
   position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: 100;
-  padding: 14px 40px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: rgba(20,12,31,0.75);
-  backdrop-filter: blur(18px);
-  border-bottom: 1px solid rgba(200,166,70,0.25);
-  box-shadow: 0 4px 30px rgba(0,0,0,0.3);
+  top:0;
+  width:100%;
+  z-index:100;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:14px 40px;
+  background: rgba(255,255,255,0.9);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 25px rgba(0,0,0,0.08);
+  border-bottom:1px solid var(--or-clair);
 }
 
+.nav-logo { font-family:'Cinzel', serif; font-weight:700; color: var(--violet); font-size:1.4rem; }
+.nav-logo em { color: var(--or); font-style:normal; }
+
+.nav-links { display:flex; list-style:none; gap:20px; }
 .nav-links li a {
-  font-size: 0.75rem;
-  letter-spacing: 0.14em;
-  color: rgba(255,255,255,0.75);
-  text-decoration: none;
-  text-transform: uppercase;
-  transition: all 0.3s;
-  padding: 6px 14px;
+  text-transform:uppercase;
+  font-weight:600;
+  font-size:0.75rem;
+  color: var(--gris-fonce);
+  transition: all var(--transition);
+}
+.nav-links li a:hover { color: var(--or); }
+.nav-cta a {
+  padding:7px 18px;
+  border:2px solid var(--or);
+  border-radius:6px;
+  background: rgba(212,160,23,0.1);
+}
+.nav-cta a:hover { background: var(--or); color: var(--blanc); }
+
+/* SECTIONS */
+section { padding:80px 20px; max-width:1200px; margin:0 auto; }
+.section-title { font-family:'Cinzel', serif; font-size:clamp(1.8rem,3vw,2.6rem); margin-bottom:16px; }
+.section-desc { font-size:1rem; color:rgba(0,0,0,0.7); margin-bottom:40px; }
+
+/* CARDS */
+.article-card, .solidarite-card, .defi-step {
+  background: var(--gris-clair);
+  border-radius: var(--radius);
+  padding:24px;
+  box-shadow:0 6px 20px rgba(0,0,0,0.08);
+  transition: all var(--transition);
+}
+.article-card:hover, .solidarite-card:hover, .defi-step:hover {
+  transform: translateY(-5px);
+  box-shadow:0 12px 30px rgba(0,0,0,0.12);
 }
 
-.nav-links li a:hover {
-  color: var(--or);
-}
+.card-title { font-family:'Playfair Display', serif; font-size:1.3rem; margin-bottom:8px; color: var(--violet);}
+.card-excerpt { font-size:0.95rem; color: rgba(0,0,0,0.7);}
 
-.nav-links .nav-cta a {
-  border: 1px solid var(--or);
-  color: var(--or);
-  padding: 7px 18px;
-  background: rgba(200,166,70,0.08);
-  border-radius: 6px;
-}
-
-.nav-links .nav-cta a:hover {
-  background: rgba(200,166,70,0.18);
-}
-
-/* =========================
-   SECTIONS
-========================= */
-section {
-  position: relative;
-  z-index: 1;
-  padding: 100px 60px;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.section-title {
-  font-family: 'Cinzel', serif;
-  font-size: clamp(1.8rem, 3vw, 2.6rem);
-  margin-bottom: 16px;
-}
-
-.section-desc {
-  font-size: 1.1rem;
-  line-height: 1.8;
-  color: rgba(255,255,255,0.75);
-  max-width: 600px;
-  margin-bottom: 60px;
-}
-
-/* =========================
-   CARDS (PLUS MODERNES)
-========================= */
-.article-card,
-.solidarite-card,
-.forum-topic,
-.defi-step {
-  border-radius: 10px;
-}
-
-.article-card {
-  border: 1px solid var(--creme-bord);
-  background: var(--creme);
-  padding: 32px 28px;
-  transition: all 0.4s;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-}
-
-.article-card:hover {
-  transform: translateY(-6px);
-  border-color: var(--or);
-  box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-}
-
-.card-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.3rem;
-  color: var(--texte-sombre);
-}
-
-.card-excerpt {
-  color: var(--texte-moyen);
-}
-
-/* =========================
-   BOUTONS PLUS DOUX
-========================= */
+/* BOUTONS */
 .btn-primary {
-  padding: 14px 32px;
+  padding:14px 32px;
   background: linear-gradient(135deg, var(--or), var(--or-clair));
-  color: #2c1f14;
-  font-family: 'Cinzel', serif;
-  font-size: 0.75rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.3s;
+  border:none;
+  border-radius:6px;
+  font-family:'Cinzel', serif;
+  font-weight:600;
+  cursor:pointer;
+  transition: all var(--transition);
 }
-
-.btn-primary:hover {
-  box-shadow: 0 8px 25px rgba(200,166,70,0.4);
-  transform: translateY(-2px);
-}
-
+.btn-primary:hover { transform:translateY(-2px); box-shadow:0 8px 25px rgba(212,160,23,0.4); }
 .btn-outline {
-  padding: 14px 32px;
-  border: 1px solid var(--blanc);
-  color: var(--blanc);
-  background: transparent;
-  border-radius: 6px;
-  transition: 0.3s;
+  padding:14px 32px;
+  border:1px solid var(--gris-fonce);
+  border-radius:6px;
+  background:transparent;
+  color: var(--gris-fonce);
+  transition: all var(--transition);
 }
+.btn-outline:hover { border-color: var(--or); color: var(--or); }
 
-.btn-outline:hover {
-  border-color: var(--or);
-  color: var(--or);
-}
-
-/* =========================
-   PAGES CLAIRES
-========================= */
-body.page-claire {
-  background: var(--fond-clair);
-  color: var(--texte-sombre);
-}
-
-body.page-claire nav {
-  background: rgba(255,255,255,0.85);
-  backdrop-filter: blur(14px);
-  border-bottom: 1px solid rgba(200,166,70,0.2);
-}
-
-body.page-claire .nav-links li a {
-  color: var(--texte-moyen);
-}
-
-body.page-claire .nav-links li a:hover {
-  color: var(--or);
-}
-
-body.page-claire .article-card,
-body.page-claire .forum-topic,
-body.page-claire .solidarite-card {
-  background: #ffffff;
-  box-shadow: 0 4px 18px rgba(180,140,100,0.12);
-}
-
-body.page-claire .section-title {
-  color: var(--texte-sombre);
-}
-
-body.page-claire .section-desc {
-  color: var(--texte-moyen);
-}
-
-/* =========================
-   FOOTER PLUS ELEGANT
-========================= */
+/* FOOTER */
 footer {
-  border-top: 1px solid rgba(200,166,70,0.15);
-  padding: 60px;
+  background: var(--violet);
+  color: var(--blanc);
+  padding:60px 40px;
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:space-between;
+  gap:40px;
 }
+footer h4 { color: var(--or); margin-bottom:12px; font-family:'Cinzel', serif; letter-spacing:0.1em; }
+footer a { color: var(--blanc); text-decoration:none; transition: all var(--transition);}
+footer a:hover { color: var(--or-clair); }
+.footer-bottom { text-align:center; margin-top:40px; font-size:0.8rem; color: rgba(255,255,255,0.7); }
 
-footer h4 {
-  color: var(--or);
-  letter-spacing: 0.2em;
-}
-
-footer a:hover {
-  color: var(--or-clair);
-}
-
-/* =========================
-   NEWSLETTER
-========================= */
-.newsletter-form {
-  border: 1px solid var(--or);
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.newsletter-form input {
-  background: var(--creme);
-  color: var(--texte-sombre);
-}
-
-.newsletter-form button {
-  background: linear-gradient(135deg, var(--or), var(--or-clair));
-  color: #2c1f14;
+/* RESPONSIVE */
+@media(max-width:768px){
+  nav { flex-direction:column; gap:12px; padding:14px 20px; }
+  .nav-links { flex-wrap:wrap; justify-content:center; gap:14px; }
+  footer { flex-direction:column; text-align:center; }
 }
 </style>
 {% block extra_css %}{% endblock %}
 </head>
 <body class="{% block body_class %}{% endblock %}">
-<div class="stars" id="stars"></div>
 
 {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
@@ -286,37 +146,30 @@ footer a:hover {
 {% endwith %}
 
 <nav>
-  <a href="{{ url_for('main.index') }}" class="nav-logo">
-    <div class="nav-logo-text">
-      <span class="nav-logo-name">Influençons<em>.com</em></span>
-      <span class="nav-logo-slogan">Influençons Autrement</span>
-    </div>
-  </a>
+  <a href="{{ url_for('main.index') }}" class="nav-logo">Influençons<em>.com</em></a>
   <ul class="nav-links">
     <li><a href="{{ url_for('main.index') }}">Accueil</a></li>
     <li><a href="{{ url_for('main.articles') }}">Articles</a></li>
     <li><a href="{{ url_for('main.index') }}#defis">Défis</a></li>
     <li><a href="{{ url_for('main.index') }}#solidarite">Solidarité</a></li>
-    <li><a href="{{ url_for('main.index') }}#forum">Forum</a></li>
     <li class="nav-cta"><a href="{{ url_for('main.index') }}#newsletter">Newsletter ✦</a></li>
   </ul>
 </nav>
 
 {% block content %}{% endblock %}
 
-<div class="full-divider"></div>
 <footer>
   <div>
     <h4>Influençons.com</h4>
-    <p>Un blog chrétien ouvert à tous — croyants ou non — pour vivre avec plus de sens, de bienveillance et d'amour du prochain.</p>
-    <p style="margin-top:12px; color:var(--or); font-size:0.8rem; font-style:italic;">« Influençons Autrement »</p>
+    <p>Blog chrétien pour vivre avec sens, bienveillance et amour du prochain.</p>
+    <p style="font-style:italic; color: var(--or-clair);">« Influençons Autrement »</p>
   </div>
   <div>
     <h4>Navigation</h4>
-    <a href="{{ url_for('main.index') }}">Accueil</a>
-    <a href="{{ url_for('main.articles') }}">Articles</a>
-    <a href="{{ url_for('main.index') }}#defis">Défis & Challenges</a>
-    <a href="{{ url_for('main.index') }}#solidarite">Solidarité</a>
+    <a href="{{ url_for('main.index') }}">Accueil</a><br>
+    <a href="{{ url_for('main.articles') }}">Articles</a><br>
+    <a href="{{ url_for('main.index') }}#defis">Défis & Challenges</a><br>
+    <a href="{{ url_for('main.index') }}#solidarite">Solidarité</a><br>
     <a href="{{ url_for('main.index') }}#newsletter">Newsletter</a>
   </div>
   <div>
@@ -327,28 +180,6 @@ footer a:hover {
 </footer>
 <div class="footer-bottom">© 2025 Influençons.com — Tous droits réservés · Fondé par Evelyne Koffi</div>
 
-<script>
-  const sc = document.getElementById('stars');
-  for (let i = 0; i < 80; i++) {
-    const s = document.createElement('div');
-    const g = Math.random() > 0.65;
-    s.className = 'star' + (g ? ' gold' : '');
-    const sz = Math.random() * 2.5 + 0.5;
-    s.style.cssText = `width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;--d:${2+Math.random()*4}s;animation-delay:${Math.random()*5}s;`;
-    sc.appendChild(s);
-  }
-  setTimeout(() => {
-    document.querySelectorAll('.flash-msg').forEach(m => { m.style.transition = 'opacity 0.5s'; m.style.opacity = '0'; setTimeout(() => m.remove(), 500); });
-  }, 4000);
-  const obs = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.style.opacity='1'; e.target.style.transform='translateY(0)'; }});
-  }, {threshold: 0.08});
-  document.querySelectorAll('.article-card, .solidarite-card, .defi-step').forEach((el, i) => {
-    el.style.opacity='0'; el.style.transform='translateY(32px)';
-    el.style.transition=`opacity 0.8s ${i*0.12}s cubic-bezier(.22,1,.36,1), transform 0.8s ${i*0.12}s cubic-bezier(.22,1,.36,1)`;
-    obs.observe(el);
-  });
-</script>
 {% block extra_js %}{% endblock %}
 </body>
 </html>
