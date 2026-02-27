@@ -130,11 +130,11 @@ footer a:hover { color: var(--or-clair); }
   <p class="section-desc">Des textes pour nourrir l'âme et grandir dans la bienveillance.</p>
   <div class="articles-grid">
     {% for art in articles %}
-    <div class="article-card" onclick="window.location='{{ url_for('main.article', slug=art.slug) }}'">
-      <h3>{{ art.title }}</h3>
-      <p>{{ art.excerpt or '' }}</p>
-      <a href="{{ url_for('main.article', slug=art.slug) }}" class="card-link">Lire l'article →</a>
-    </div>
+    <div class="article-card" id="article-{{ art.slug }}" onclick="window.location='#article-{{ art.slug }}'">
+  <h3>{{ art.title }}</h3>
+  <p>{{ art.excerpt or '' }}</p>
+  <a href="#article-{{ art.slug }}" class="card-link">Lire l'article →</a>
+</div>>
     {% else %}
     <div style="grid-column:span 3; text-align:center; opacity:0.5;">
       <p>Les premiers articles arrivent bientôt…</p>
