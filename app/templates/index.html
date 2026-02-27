@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Influençons.com — Influençons Autrement</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Jost:wght@200;300;400;500;600&display=swap" rel="stylesheet">
-
+<link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
 <style>
 
 /* ─── FLASH MESSAGES ─────────────────────────────────────── */
@@ -501,7 +501,12 @@ footer::after {
 <!-- ═══════════════════════════════════════ NAV ════ -->
 <nav id="nav">
   <a href="#accueil" class="nav-brand">
-    
+    <span class="flame-icon">
+      <svg width="18" height="26" viewBox="0 0 18 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M9 1C9 1 14 6.5 14 11C14 13.5 12 15 9 15C6 15 4 13.5 4 11C4 8.5 6 6 9 6C9 6 7 8 7 10C7 11.5 7.9 12.5 9 12.5C10.1 12.5 11 11.5 11 10C11 7 9 1 9 1Z" fill="#c9a84c"/>
+        <path d="M9 15C9 15 3 17 3 21.5C3 23.9 5.7 25 9 25C12.3 25 15 23.9 15 21.5C15 17 9 15 9 15Z" fill="#c9a84c" opacity="0.7"/>
+      </svg>
+    </span>
     influençons<span>.com</span>
   </a>
   <button class="burger" id="burger" aria-label="Menu" onclick="toggleMenu()">
@@ -542,7 +547,9 @@ footer::after {
   <div class="articles-grid">
     {% for art in articles %}
     <div class="article-card fade-up" id="article-{{ art.slug }}"
-         onclick="openModal('{{ art.title | e }}', '{{ art.content | e }}')">
+         data-title="{{ art.title | e }}"
+         data-content="{{ art.content | e }}"
+         onclick="openModal(this)">
       <div class="article-card-body">
         {% if art.category %}<span class="article-card-tag">{{ art.category }}</span>{% endif %}
         <h3>{{ art.title }}</h3>
@@ -611,7 +618,7 @@ footer::after {
     <h2 class="section-title">Grace Yeboua</h2>
     <p>Bienvenue sur Influençons.com — un espace né d'une conviction simple : la vraie influence ne cherche pas les projecteurs, elle cherche les cœurs.</p>
     <p>Ce blog est un lieu de réflexion, d'inspiration et d'action. Parce que chacun d'entre nous porte une lumière unique, capable de transformer son entourage.</p>
-    <span class="section-label" style="margin-top:1.5rem; display:block;">#influençons autrement</span>
+    <span class="section-label" style="margin-top:1.5rem; display:block;">À l'essentiel. Toujours. — Grace</span>
   </div>
 </section>
 
@@ -620,7 +627,7 @@ footer::after {
   <div class="contact-inner fade-up">
     <span class="section-label">Nous écrire</span>
     <h2 class="section-title">Contact</h2>
-    <p class="section-desc" style="margin: 0 auto 2rem; color: rgba(255,255,255,0.6);">Une question, une idée, un témoignage ? N'hesitez pas je vous lirais avec joie.</p>
+    <p class="section-desc" style="margin: 0 auto 2rem; color: rgba(255,255,255,0.6);">Une question, une idée, un témoignage ? Grace vous lit avec joie.</p>
     <a href="/cdn-cgi/l/email-protection#254257444640405340495c4b40101c654248444c490b464a48" class="contact-email"><span class="__cf_email__" data-cfemail="187f6a797b7d7d6e7d7461767d2d21587f75797174367b7775">[email&#160;protected]</span></a>
   </div>
 </section>
@@ -652,7 +659,7 @@ footer::after {
 <footer>
   <div class="footer-top">
 
-
+    <p class="footer-title">Influençons autrement</p>
 
     <ul class="footer-nav">
       <li><a href="#accueil">Accueil</a></li>
@@ -670,7 +677,7 @@ footer::after {
       <a href="/cdn-cgi/l/email-protection#751207141610100310190c1b10404c351218141c195b161a18"><span class="__cf_email__" data-cfemail="98ffeaf9fbfdfdeefdf4e1f6fdada1d8fff5f9f1f4b6fbf7f5">[email&#160;protected]</span></a>
     </div>
 
-    <p class="footer-tagline">Influençons autrement </p>
+    <p class="footer-tagline">À l'essentiel. Toujours. — Grace</p>
   </div>
 
   <div class="footer-bottom">
@@ -706,10 +713,11 @@ window.addEventListener('scroll', () => {
 });
 
 /* ── Modal ── */
-/* ── Modal ── */
-function openModal(title, content) {
+function openModal(card) {
+  const title   = card.getAttribute('data-title');
+  const content = card.getAttribute('data-content');
   document.getElementById('modal-title').innerText = title;
-  document.getElementById('modal-body').innerHTML = content;
+  document.getElementById('modal-body').innerHTML  = content;
   document.getElementById('article-modal').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
