@@ -25,7 +25,7 @@ class Article(db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 class Defi(db.Model):
-    __tablename__ = 'defis'
+    __tablename__ = 'defi'  
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
     description = db.Column(db.Text)
