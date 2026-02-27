@@ -1,80 +1,308 @@
 {% extends 'admin/base.html' %}
+
 {% block page_title %}Tableau de bord{% endblock %}
+
 {% block topbar_actions %}
 <a href="{{ url_for('main.index') }}" class="btn btn-ghost" target="_blank">🌐 Voir le site</a>
 {% endblock %}
+
 {% block content %}
+
+<!-- ─── STATS ─────────────────────────────────────────────── -->
 <div class="stats-grid">
   <div class="stat-card">
+    <div class="stat-icon">📝</div>
     <div class="num">{{ stats.articles }}</div>
-    <div class="label">📝 Articles</div>
+    <div class="label">Articles</div>
   </div>
   <div class="stat-card">
+    <div class="stat-icon">🎯</div>
     <div class="num">{{ stats.defis }}</div>
-    <div class="label">🎯 Défis</div>
+    <div class="label">Défis</div>
   </div>
   <div class="stat-card">
+    <div class="stat-icon">🤝</div>
     <div class="num">{{ stats.solidarite }}</div>
-    <div class="label">🤝 Actions</div>
+    <div class="label">Actions</div>
   </div>
   <div class="stat-card">
+    <div class="stat-icon">💬</div>
     <div class="num">{{ stats.topics }}</div>
-    <div class="label">💬 Sujets forum</div>
+    <div class="label">Sujets forum</div>
   </div>
-  <div class="stat-card">
+  <div class="stat-card stat-card--gold">
+    <div class="stat-icon">📧</div>
     <div class="num">{{ stats.subscribers }}</div>
-    <div class="label">📧 Abonnés</div>
+    <div class="label">Abonnés newsletter</div>
   </div>
 </div>
 
-<div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+<!-- ─── TABLES ────────────────────────────────────────────── -->
+<div class="dashboard-grid">
+
+  <!-- Derniers articles -->
   <div class="table-wrap">
     <div class="table-header">
       <h3>Derniers articles</h3>
       <a href="{{ url_for('admin.article_new') }}" class="btn btn-gold">+ Nouveau</a>
     </div>
     <table>
-      <thead><tr><th>Titre</th><th>Statut</th><th>Date</th></tr></thead>
+      <thead>
+        <tr>
+          <th>Titre</th>
+          <th>Statut</th>
+          <th>Date</th>
+        </tr>
+      </thead>
       <tbody>
         {% for art in recent_articles %}
         <tr>
-          <td><a href="{{ url_for('admin.article_edit', id=art.id) }}" style="color:var(--or); text-decoration:none;">{{ art.title[:40] }}{% if art.title|length > 40 %}…{% endif %}</a></td>
-          <td><span class="badge {% if art.is_published %}badge-success{% else %}badge-muted{% endif %}">{% if art.is_published %}Publié{% else %}Brouillon{% endif %}</span></td>
-          <td style="color:var(--text-muted); font-size:0.8rem;">{{ art.created_at.strftime('%d/%m/%Y') }}</td>
+          <td>
+            <a href="{{ url_for('admin.article_edit', id=art.id) }}" class="table-link">
+              {{ art.title[:40] }}{% if art.title|length > 40 %}…{% endif %}
+            </a>
+          </td>
+          <td>
+            <span class="badge {% if art.is_published %}badge-success{% else %}badge-muted{% endif %}">
+              {% if art.is_published %}Publié{% else %}Brouillon{% endif %}
+            </span>
+          </td>
+          <td class="date-cell">{{ art.created_at.strftime('%d/%m/%Y') }}</td>
         </tr>
         {% else %}
-        <tr><td colspan="3" style="text-align:center; color:var(--text-muted); padding:24px;">Aucun article</td></tr>
+        <tr>
+          <td colspan="3" class="empty-row">Aucun article pour le moment</td>
+        </tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
 
+  <!-- Derniers abonnés -->
   <div class="table-wrap">
     <div class="table-header">
       <h3>Derniers abonnés newsletter</h3>
       <a href="{{ url_for('admin.newsletter') }}" class="btn btn-ghost">Voir tout</a>
     </div>
     <table>
-      <thead><tr><th>Email</th><th>Date</th><th>Statut</th></tr></thead>
+      <thead>
+        <tr>
+          <th>Email</th>
+          <th>Date</th>
+          <th>Statut</th>
+        </tr>
+      </thead>
       <tbody>
         {% for sub in recent_subscribers %}
         <tr>
-          <td style="font-size:0.85rem;">{{ sub.email }}</td>
-          <td style="color:var(--text-muted); font-size:0.8rem;">{{ sub.created_at.strftime('%d/%m/%Y') }}</td>
-          <td><span class="badge {% if sub.is_active %}badge-success{% else %}badge-muted{% endif %}">{% if sub.is_active %}Actif{% else %}Inactif{% endif %}</span></td>
+          <td class="email-cell">{{ sub.email }}</td>
+          <td class="date-cell">{{ sub.created_at.strftime('%d/%m/%Y') }}</td>
+          <td>
+            <span class="badge {% if sub.is_active %}badge-success{% else %}badge-muted{% endif %}">
+              {% if sub.is_active %}Actif{% else %}Inactif{% endif %}
+            </span>
+          </td>
         </tr>
         {% else %}
-        <tr><td colspan="3" style="text-align:center; color:var(--text-muted); padding:24px;">Aucun abonné</td></tr>
+        <tr>
+          <td colspan="3" class="empty-row">Aucun abonné pour le moment</td>
+        </tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
+
 </div>
 
-<div style="margin-top:24px; display:grid; grid-template-columns:repeat(4,1fr); gap:16px;">
-  <a href="{{ url_for('admin.article_new') }}" class="btn btn-gold" style="justify-content:center; padding:16px;">📝 Nouvel article</a>
-  <a href="{{ url_for('admin.defi_new') }}" class="btn btn-ghost" style="justify-content:center; padding:16px;">🎯 Nouveau défi</a>
-  <a href="{{ url_for('admin.solidarite_new') }}" class="btn btn-ghost" style="justify-content:center; padding:16px;">🤝 Nouvelle action</a>
-  <a href="{{ url_for('admin.forum_new') }}" class="btn btn-ghost" style="justify-content:center; padding:16px;">💬 Nouveau sujet</a>
+<!-- ─── ACTIONS RAPIDES ───────────────────────────────────── -->
+<div class="quick-actions">
+  <p class="quick-actions__label">Actions rapides</p>
+  <div class="quick-actions__grid">
+    <a href="{{ url_for('admin.article_new') }}" class="quick-btn quick-btn--gold">
+      <span class="quick-btn__icon">📝</span>
+      <span>Nouvel article</span>
+    </a>
+    <a href="{{ url_for('admin.defi_new') }}" class="quick-btn">
+      <span class="quick-btn__icon">🎯</span>
+      <span>Nouveau défi</span>
+    </a>
+    <a href="{{ url_for('admin.solidarite_new') }}" class="quick-btn">
+      <span class="quick-btn__icon">🤝</span>
+      <span>Nouvelle action</span>
+    </a>
+    <a href="{{ url_for('admin.forum_new') }}" class="quick-btn">
+      <span class="quick-btn__icon">💬</span>
+      <span>Nouveau sujet</span>
+    </a>
+  </div>
 </div>
+
+<!-- ─── STYLES SPÉCIFIQUES AU DASHBOARD ──────────────────── -->
+<style>
+/* ── Stats grid ── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.stat-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 1.5rem 1.2rem;
+  text-align: center;
+  border: 1px solid rgba(201,168,76,0.12);
+  transition: transform .3s, box-shadow .3s;
+}
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(30,17,64,0.1);
+}
+.stat-card--gold {
+  background: linear-gradient(135deg, var(--violet-deep, #1e1140), var(--violet, #2d1a52));
+  border-color: transparent;
+}
+.stat-card--gold .num,
+.stat-card--gold .label,
+.stat-card--gold .stat-icon { color: var(--gold, #c9a84c) !important; }
+
+.stat-icon { font-size: 1.4rem; margin-bottom: .4rem; }
+.stat-card .num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.6rem; font-weight: 600; line-height: 1;
+  color: var(--violet-deep, #1e1140);
+  margin-bottom: .3rem;
+}
+.stat-card .label {
+  font-size: 0.72rem; font-weight: 500;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--text-light, #7a6a99);
+}
+
+/* ── Dashboard grid ── */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* ── Table wrap ── */
+.table-wrap {
+  background: #fff;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(201,168,76,0.12);
+}
+.table-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.2rem 1.5rem;
+  border-bottom: 1px solid rgba(201,168,76,0.1);
+}
+.table-header h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem; font-weight: 600;
+  color: var(--violet-deep, #1e1140);
+}
+table { width: 100%; border-collapse: collapse; }
+thead th {
+  padding: .75rem 1.5rem;
+  font-size: 0.65rem; font-weight: 500;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--text-light, #7a6a99);
+  text-align: left;
+  border-bottom: 1px solid rgba(201,168,76,0.08);
+}
+tbody tr { transition: background .2s; }
+tbody tr:hover { background: rgba(201,168,76,0.04); }
+tbody td { padding: .85rem 1.5rem; font-size: 0.88rem; }
+
+.table-link {
+  color: var(--gold, #c9a84c);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color .2s;
+}
+.table-link:hover { color: var(--violet-deep, #1e1140); }
+
+.date-cell { color: var(--text-light, #7a6a99); font-size: 0.78rem; }
+.email-cell { font-size: 0.83rem; color: var(--text-dark, #1a1025); }
+.empty-row {
+  text-align: center;
+  color: var(--text-light, #7a6a99);
+  padding: 2rem !important;
+  font-style: italic;
+  font-size: 0.85rem;
+}
+
+/* ── Badges ── */
+.badge {
+  display: inline-block;
+  padding: .25rem .75rem;
+  border-radius: 100px;
+  font-size: 0.65rem; font-weight: 500;
+  letter-spacing: 0.1em; text-transform: uppercase;
+}
+.badge-success {
+  background: rgba(201,168,76,0.15);
+  color: #7a5c10;
+}
+.badge-muted {
+  background: rgba(122,106,153,0.12);
+  color: var(--text-light, #7a6a99);
+}
+
+/* ── Quick actions ── */
+.quick-actions { margin-top: .5rem; }
+.quick-actions__label {
+  font-size: 0.65rem; font-weight: 500;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--text-light, #7a6a99);
+  margin-bottom: .75rem;
+}
+.quick-actions__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+.quick-btn {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: .5rem; padding: 1.2rem 1rem;
+  background: #fff; border-radius: 14px;
+  border: 1px solid rgba(201,168,76,0.15);
+  font-size: 0.78rem; font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--violet-deep, #1e1140);
+  text-decoration: none;
+  transition: all .3s;
+}
+.quick-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(30,17,64,0.1);
+  border-color: var(--gold, #c9a84c);
+  color: var(--gold, #c9a84c);
+}
+.quick-btn--gold {
+  background: var(--violet-deep, #1e1140);
+  color: var(--gold, #c9a84c);
+  border-color: transparent;
+}
+.quick-btn--gold:hover {
+  background: var(--violet, #2d1a52);
+  color: var(--gold-light, #e0c068);
+}
+.quick-btn__icon { font-size: 1.4rem; }
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .dashboard-grid { grid-template-columns: 1fr; }
+  .quick-actions__grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 560px) {
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .quick-actions__grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+
 {% endblock %}
