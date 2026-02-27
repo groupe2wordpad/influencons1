@@ -1,33 +1,47 @@
 {% extends 'base.html' %}
 {% block title %}Articles — Influençons.com{% endblock %}
 {% block body_class %}page-claire{% endblock %}
+
 {% block content %}
 <section style="padding-top:120px;">
   <span class="section-label">✦ Réflexions & Inspirations</span>
   <h2 class="section-title">Tous les Articles</h2>
   <p class="section-desc">Des textes pour nourrir l'âme, questionner le regard et grandir dans la bienveillance.</p>
-  <div class="articles-grid">
+
+  <div class="articles-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px,1fr)); gap:28px;">
     {% for art in articles.items %}
-    <div class="article-card" onclick="window.location='{{ url_for('main.article', slug=art.slug) }}'">
-      <span class="card-tag">{{ art.tag or 'Réflexion' }}</span>
+    <div class="article-card" onclick="window.location='{{ url_for('main.article', slug=art.slug) }}'" style="cursor:pointer;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <span style="font-size:0.75rem; color:var(--or); font-weight:600;">{{ art.tag or 'Réflexion' }}</span>
+        <span style="font-size:0.7rem; color:rgba(0,0,0,0.5);">{{ art.created_at.strftime('%d/%m/%Y') }}</span>
+      </div>
       <h3 class="card-title">{{ art.title }}</h3>
       <p class="card-excerpt">{{ art.excerpt or '' }}</p>
-      <span style="font-size:0.8rem; color:var(--texte-leger); margin-bottom:16px; display:block;">{{ art.created_at.strftime('%d/%m/%Y') }}</span>
-      <a href="{{ url_for('main.article', slug=art.slug) }}" class="card-link">Lire l'article →</a>
+      <a href="{{ url_for('main.article', slug=art.slug) }}" class="btn-outline" style="margin-top:12px; display:inline-block;">Lire l'article →</a>
     </div>
     {% else %}
     <div class="article-card" style="grid-column:span 3; text-align:center; opacity:0.5;">
-      <p style="color:var(--texte-moyen);">Les premiers articles arrivent bientôt... ✦</p>
+      <p style="color:rgba(0,0,0,0.6);">Les premiers articles arrivent bientôt... ✦</p>
     </div>
     {% endfor %}
   </div>
+
   {% if articles.pages > 1 %}
-  <div style="display:flex; justify-content:center; gap:12px; margin-top:50px;">
+  <div style="display:flex; justify-content:center; gap:10px; margin-top:50px; flex-wrap:wrap;">
     {% for p in articles.iter_pages() %}
       {% if p %}
-        <a href="{{ url_for('main.articles', page=p) }}" style="padding:8px 16px; border:1px solid {% if p == articles.page %}var(--or){% else %}rgba(180,140,100,0.4){% endif %}; color:{% if p == articles.page %}var(--or){% else %}var(--texte-moyen){% endif %}; text-decoration:none; font-family:'Cinzel',serif; font-size:0.8rem; transition:all 0.3s;">{{ p }}</a>
+        <a href="{{ url_for('main.articles', page=p) }}" style="
+          padding:8px 14px;
+          border:1px solid {% if p == articles.page %}var(--or){% else %}rgba(180,140,100,0.4){% endif %};
+          color:{% if p == articles.page %}var(--or){% else %}rgba(0,0,0,0.6){% endif %};
+          font-family:'Cinzel',serif;
+          font-size:0.8rem;
+          border-radius:6px;
+          text-decoration:none;
+          transition:all 0.3s;
+        ">{{ p }}</a>
       {% else %}
-        <span style="color:var(--texte-leger); padding:8px;">…</span>
+        <span style="color:rgba(0,0,0,0.4); padding:8px;">…</span>
       {% endif %}
     {% endfor %}
   </div>
