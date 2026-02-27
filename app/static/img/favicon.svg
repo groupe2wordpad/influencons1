@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <radialGradient id="flameGrad" cx="50%" cy="80%" r="60%">
+      <stop offset="0%"   stop-color="#e0c068"/>
+      <stop offset="60%"  stop-color="#c9a84c"/>
+      <stop offset="100%" stop-color="#2d1a52"/>
+    </radialGradient>
+  </defs>
+  <!-- Corps de la flamme -->
+  <path d="M16 2
+    C16 2 23 9 23 15
+    C23 18.5 21 21 18 22
+    C19 19 18 17 16 16
+    C14 17 13 19 14 22
+    C11 21 9 18.5 9 15
+    C9 9 16 2 16 2Z"
+    fill="url(#flameGrad)"/>
+  <!-- Petite flamme intérieure -->
+  <path d="M16 16
+    C16 16 19 18 19 21
+    C19 23.5 17.8 25 16 25
+    C14.2 25 13 23.5 13 21
+    C13 18 16 16 16 16Z"
+    fill="#2d1a52" opacity="0.5"/>
+  <!-- Base arrondie -->
+  <ellipse cx="16" cy="25" rx="5" ry="2.5" fill="#c9a84c" opacity="0.4"/>
+</svg>
