@@ -5,7 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Influençons.com — Influençons Autrement</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Jost:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+
 <style>
+
+/* ─── FLASH MESSAGES ─────────────────────────────────────── */
+.flash {
+  padding: 0.75rem 1.4rem; border-radius: 100px;
+  font-size: 0.82rem; letter-spacing: 0.06em;
+  margin-bottom: 1.2rem; display: inline-block;
+}
+.flash-success { background: rgba(30,17,64,0.12); color: var(--violet-deep); }
+.flash-error   { background: rgba(220,60,60,0.12); color: #8b2020; }
+.flash-info    { background: rgba(201,168,76,0.18); color: var(--violet-deep); }
 
 /* ─── VARIABLES ─────────────────────────────────────────── */
 :root {
@@ -408,10 +419,64 @@ footer::after {
 }
 .footer-bottom p { font-size: 0.72rem; color: rgba(255,255,255,0.3); letter-spacing: 0.08em; }
 
+/* ─── HAMBURGER ──────────────────────────────────────────── */
+.burger {
+  display: none;
+  flex-direction: column; justify-content: center; gap: 5px;
+  width: 40px; height: 40px; cursor: pointer;
+  background: none; border: none; padding: 4px;
+  z-index: 1100;
+}
+.burger span {
+  display: block; width: 100%; height: 1.5px;
+  background: var(--violet-deep);
+  border-radius: 2px;
+  transform-origin: center;
+  transition: transform 0.4s ease, opacity 0.3s ease, width 0.3s ease;
+}
+.burger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+.burger.open span:nth-child(2) { opacity: 0; width: 0; }
+.burger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+/* MOBILE MENU OVERLAY */
+.mobile-menu {
+  display: none;
+  position: fixed; inset: 0; z-index: 999;
+  background: var(--cream);
+  flex-direction: column; align-items: center; justify-content: center;
+  gap: 0;
+  opacity: 0; transform: translateY(-12px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.mobile-menu.open {
+  display: flex;
+  opacity: 1; transform: translateY(0);
+}
+.mobile-menu a {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 7vw, 3rem); font-weight: 400; font-style: italic;
+  color: var(--violet-deep); letter-spacing: 0.04em;
+  padding: 0.6rem 2rem; text-align: center;
+  position: relative; transition: color 0.3s;
+}
+.mobile-menu a::after {
+  content: ''; position: absolute; bottom: 0.3rem; left: 50%; transform: translateX(-50%);
+  width: 0; height: 1px; background: var(--gold);
+  transition: width 0.35s;
+}
+.mobile-menu a:hover { color: var(--gold); }
+.mobile-menu a:hover::after { width: 60%; }
+.mobile-menu-footer {
+  margin-top: 2.5rem;
+  font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--text-light);
+}
+
 /* ─── RESPONSIVE ─────────────────────────────────────────── */
 @media (max-width: 768px) {
   nav { padding: 0.9rem 1.5rem; }
   .nav-links { display: none; }
+  .burger { display: flex; }
   section { padding: 5rem 1.5rem; }
   #newsletter { padding: 4rem 1.5rem; }
   footer { padding: 3.5rem 1.5rem 2rem; }
@@ -421,6 +486,17 @@ footer::after {
 </style>
 </head>
 <body>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobile-menu">
+  <a href="#accueil"    onclick="closeMenu()">Accueil</a>
+  <a href="#articles"   onclick="closeMenu()">Articles</a>
+  <a href="#defis"      onclick="closeMenu()">Défis</a>
+  <a href="#solidarite" onclick="closeMenu()">Solidarité</a>
+  <a href="#apropos"    onclick="closeMenu()">À Propos</a>
+  <a href="#contact"    onclick="closeMenu()">Contact</a>
+  <p class="mobile-menu-footer">influençons.com</p>
+</div>
 
 <!-- ═══════════════════════════════════════ NAV ════ -->
 <nav id="nav">
@@ -433,6 +509,9 @@ footer::after {
     </span>
     influençons<span>.com</span>
   </a>
+  <button class="burger" id="burger" aria-label="Menu" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </button>
   <ul class="nav-links">
     <li><a href="#accueil">Accueil</a></li>
     <li><a href="#articles">Articles</a></li>
@@ -466,33 +545,21 @@ footer::after {
   <p class="section-desc">Des textes pour nourrir l'âme, questionner le regard et grandir dans la bienveillance.</p>
 
   <div class="articles-grid">
-    <!-- Exemple statique - à remplacer par {% for art in articles %} -->
-    <div class="article-card fade-up" onclick="openModal('La lumière intérieure','<p>Contenu de l\'article à venir...</p>')">
+    {% for art in articles %}
+    <div class="article-card fade-up" id="article-{{ art.slug }}"
+         onclick="openModal('{{ art.title | e }}', '{{ art.content | e }}')">
       <div class="article-card-body">
-        <span class="article-card-tag">Spiritualité</span>
-        <h3>La lumière intérieure</h3>
-        <p>Découvrir comment notre foi peut rayonner au-delà de nos propres limites et toucher ceux qui nous entourent.</p>
+        {% if art.category %}<span class="article-card-tag">{{ art.category }}</span>{% endif %}
+        <h3>{{ art.title }}</h3>
+        <p>{{ art.excerpt or '' }}</p>
         <a href="javascript:void(0)" class="card-link">Lire l'article →</a>
       </div>
     </div>
-    <div class="article-card fade-up" onclick="openModal('Influencer autrement','<p>Contenu de l\'article à venir...</p>')">
-      <div class="article-card-body">
-        <span class="article-card-tag">Inspiration</span>
-        <h3>Influencer autrement</h3>
-        <p>Dans un monde saturé de bruit, comment pouvons-nous exercer une influence profonde et authentique ?</p>
-        <a href="javascript:void(0)" class="card-link">Lire l'article →</a>
-      </div>
+    {% else %}
+    <div class="empty-state">
+      <p>Les premiers articles arrivent bientôt…</p>
     </div>
-    <div class="article-card fade-up" onclick="openModal('Grandir en bienveillance','<p>Contenu de l\'article à venir...</p>')">
-      <div class="article-card-body">
-        <span class="article-card-tag">Croissance</span>
-        <h3>Grandir en bienveillance</h3>
-        <p>La bienveillance n'est pas une faiblesse — c'est une force qui transforme les cœurs et ouvre les portes.</p>
-        <a href="javascript:void(0)" class="card-link">Lire l'article →</a>
-      </div>
-    </div>
-    <!-- Fin articles exemples | Template: {% else %} -->
-    <!-- <div class="empty-state"><p>Les premiers articles arrivent bientôt…</p></div> -->
+    {% endfor %}
   </div>
 </section>
 
@@ -509,11 +576,14 @@ footer::after {
 <section id="defis">
   <div class="defi-inner fade-up">
     <span class="defi-badge">✦ Défi du moment</span>
-    <!-- Template: {% if defi %} -->
-    <h2>Rayonner dans le quotidien</h2>
-    <p>Cette semaine, pose un geste concret de générosité anonyme chaque jour. Observe comment la lumière se propage autour de toi sans que tu aies besoin d'en parler.</p>
+    {% if defi %}
+    <h2>{{ defi.title }}</h2>
+    <p>{{ defi.description }}</p>
     <button class="defi-cta">Relever le défi ↗</button>
-    <!-- {% endif %} -->
+    {% else %}
+    <h2>Un nouveau défi arrive bientôt…</h2>
+    <p>Revenez régulièrement pour découvrir les prochains défis de la communauté.</p>
+    {% endif %}
   </div>
 </section>
 
@@ -524,23 +594,17 @@ footer::after {
   <p class="section-desc">Des actions concrètes pour toucher des vies et faire une différence durable.</p>
 
   <div class="solidarite-grid">
-    <!-- Template: {% for action in solidarite %} -->
+    {% for action in solidarite %}
     <div class="solidarite-card fade-up">
-      <h3>Soutenir les familles</h3>
-      <p>Rejoignez notre réseau de soutien aux familles en difficulté dans votre communauté locale.</p>
+      <h3>{{ action.title }}</h3>
+      <p>{{ action.description }}</p>
       <a href="#contact" class="card-link">En savoir plus →</a>
     </div>
-    <div class="solidarite-card fade-up">
-      <h3>Partager la connaissance</h3>
-      <p>Participez à nos ateliers hebdomadaires pour transmettre vos compétences à ceux qui en ont besoin.</p>
-      <a href="#contact" class="card-link">En savoir plus →</a>
+    {% else %}
+    <div class="empty-state">
+      <p>Les actions de solidarité arrivent bientôt…</p>
     </div>
-    <div class="solidarite-card fade-up">
-      <h3>Tisser des liens</h3>
-      <p>Rejoignez notre communauté bienveillante et créez des connexions qui changent des vies.</p>
-      <a href="#contact" class="card-link">En savoir plus →</a>
-    </div>
-    <!-- {% else %} <div class="empty-state"><p>Les actions arrivent bientôt…</p></div> {% endfor %} -->
+    {% endfor %}
   </div>
 </section>
 
@@ -552,7 +616,7 @@ footer::after {
     <h2 class="section-title">Grace Yeboua</h2>
     <p>Bienvenue sur Influençons.com — un espace né d'une conviction simple : la vraie influence ne cherche pas les projecteurs, elle cherche les cœurs.</p>
     <p>Ce blog est un lieu de réflexion, d'inspiration et d'action. Parce que chacun d'entre nous porte une lumière unique, capable de transformer son entourage.</p>
-    <span class="section-label" style="margin-top:1.5rem; display:block;">À l'essentiel. Toujours. — Grace</span>
+    <span class="section-label" style="margin-top:1.5rem; display:block;">#influençons autrement</span>
   </div>
 </section>
 
@@ -561,8 +625,8 @@ footer::after {
   <div class="contact-inner fade-up">
     <span class="section-label">Nous écrire</span>
     <h2 class="section-title">Contact</h2>
-    <p class="section-desc" style="margin: 0 auto 2rem; color: rgba(255,255,255,0.6);">Une question, une idée, un témoignage ? Grace vous lit avec joie.</p>
-    <a href="mailto:graceevelyne59@gmail.com" class="contact-email">graceevelyne59@gmail.com</a>
+    <p class="section-desc" style="margin: 0 auto 2rem; color: rgba(255,255,255,0.6);">Une question, une idée, un témoignage ? N'hesitez pas je vous lirais avec joie.</p>
+    <a href="/cdn-cgi/l/email-protection#254257444640405340495c4b40101c654248444c490b464a48" class="contact-email"><span class="__cf_email__" data-cfemail="187f6a797b7d7d6e7d7461767d2d21587f75797174367b7775">[email&#160;protected]</span></a>
   </div>
 </section>
 
@@ -572,8 +636,17 @@ footer::after {
     <span class="section-label">Restez inspiré(e)</span>
     <h2>Recevez la lumière chaque semaine</h2>
     <p>Articles, défis et nouvelles directement dans votre boîte mail.</p>
-    <form class="newsletter-form" method="POST" action="#newsletter" onsubmit="return false;">
-      <input type="hidden" name="csrf_token" value="">
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form class="newsletter-form" method="POST" action="{{ url_for('main.newsletter_subscribe') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() if csrf_token is defined else '' }}">
       <input type="email" name="email" placeholder="Votre adresse email…" required>
       <button type="submit">S'abonner</button>
     </form>
@@ -584,7 +657,7 @@ footer::after {
 <footer>
   <div class="footer-top">
 
-    <p class="footer-title">Influençons autrement</p>
+
 
     <ul class="footer-nav">
       <li><a href="#accueil">Accueil</a></li>
@@ -599,10 +672,10 @@ footer::after {
 
     <div class="footer-contact">
       <strong>Grace Yeboua</strong>
-      <a href="mailto:graceevelyne59@gmail.com">graceevelyne59@gmail.com</a>
+      <a href="/cdn-cgi/l/email-protection#751207141610100310190c1b10404c351218141c195b161a18"><span class="__cf_email__" data-cfemail="98ffeaf9fbfdfdeefdf4e1f6fdada1d8fff5f9f1f4b6fbf7f5">[email&#160;protected]</span></a>
     </div>
 
-    <p class="footer-tagline">À l'essentiel. Toujours. — Grace</p>
+    <p class="footer-tagline">Influençons autrement </p>
   </div>
 
   <div class="footer-bottom">
@@ -611,7 +684,21 @@ footer::after {
 </footer>
 
 <!-- ══════════════════════════════════ JS ════ -->
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+/* ── Hamburger menu ── */
+function toggleMenu() {
+  const menu   = document.getElementById('mobile-menu');
+  const burger = document.getElementById('burger');
+  const isOpen = menu.classList.toggle('open');
+  burger.classList.toggle('open', isOpen);
+  document.body.style.overflow = isOpen ? 'hidden' : '';
+}
+function closeMenu() {
+  document.getElementById('mobile-menu').classList.remove('open');
+  document.getElementById('burger').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
 /* ── Fade-up on scroll ── */
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
@@ -623,6 +710,7 @@ window.addEventListener('scroll', () => {
   document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 40);
 });
 
+/* ── Modal ── */
 /* ── Modal ── */
 function openModal(title, content) {
   document.getElementById('modal-title').innerText = title;
@@ -639,6 +727,14 @@ window.addEventListener('click', (e) => {
 });
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') closeModal();
+});
+
+/* ── Auto-scroll vers #newsletter après soumission ── */
+window.addEventListener('DOMContentLoaded', () => {
+  if (window.location.hash === '#newsletter') {
+    const el = document.getElementById('newsletter');
+    if (el) setTimeout(() => el.scrollIntoView({ behavior: 'smooth' }), 200);
+  }
 });
 </script>
 </body>
