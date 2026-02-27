@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Influençons.com — Influençons Autrement</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cinzel:wght@400;600;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
 <style>
 :root {
   --violet: #4B2E83;
@@ -19,96 +20,101 @@
 
 /* RESET */
 * { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'Poppins',sans-serif; color:var(--gris-fonce); background:#fff; scroll-behavior:smooth; }
+body { font-family:'Poppins',sans-serif; color: var(--gris-fonce); background:#fff; overflow-x:hidden; }
 a { text-decoration:none; color:inherit; }
 section { padding:80px 20px; max-width:1200px; margin:0 auto; }
 
-/* NAVBAR */
+/* NAV */
 nav {
-  position:fixed; top:0; width:100%; z-index:100;
+  position: fixed; top:0; width:100%; z-index:100;
   display:flex; justify-content:space-between; align-items:center;
-  padding:14px 40px; background:rgba(255,255,255,0.9); backdrop-filter:blur(12px);
-  box-shadow:0 4px 25px rgba(0,0,0,0.08); border-bottom:1px solid var(--or-clair);
+  padding:14px 40px;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 25px rgba(0,0,0,0.08);
+  border-bottom:1px solid var(--or-clair);
 }
-.nav-logo { font-family:'Cinzel',serif; font-weight:700; color: var(--violet); font-size:1.4rem; }
-.nav-logo em { color: var(--or); font-style:normal; }
+.nav-logo { font-family:'Cinzel',serif; font-weight:700; color:var(--violet); font-size:1.4rem; }
+.nav-logo em { color:var(--or); font-style:normal; }
 .nav-links { display:flex; list-style:none; gap:20px; }
-.nav-links li a { text-transform:uppercase; font-weight:600; font-size:0.75rem; transition: all var(--transition); }
-.nav-links li a:hover { color: var(--or); }
-.nav-cta a { padding:7px 18px; border:2px solid var(--or); border-radius:6px; background: rgba(212,160,23,0.1); }
-.nav-cta a:hover { background: var(--or); color: var(--blanc); }
+.nav-links li a { text-transform:uppercase; font-weight:600; font-size:0.75rem; color:var(--gris-fonce); transition:all var(--transition);}
+.nav-links li a:hover { color:var(--or); }
+.nav-cta a { padding:7px 18px; border:2px solid var(--or); border-radius:6px; background: rgba(212,160,23,0.1);}
+.nav-cta a:hover { background:var(--or); color:var(--blanc); }
 
 /* HERO */
 .hero {
-  display:flex; flex-direction:column; justify-content:center; align-items:center;
-  text-align:center; min-height:100vh;
-  background: linear-gradient(135deg, var(--violet) 0%, #7A5AB8 100%);
+  display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;
+  min-height:100vh; background: linear-gradient(135deg, #4B2E83 0%, #7A5AB8 100%);
   color:var(--blanc); position:relative; overflow:hidden;
 }
-.hero h1 {
-  font-family:'Cinzel',serif; font-size:clamp(3rem,8vw,5rem);
-  background: linear-gradient(90deg,var(--or-clair),var(--or));
+.hero h1 { font-family:'Cinzel',serif; font-size:clamp(3rem,8vw,5rem);
+  background: linear-gradient(90deg, var(--or-clair), var(--or));
   -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-  margin-bottom:20px;
-}
-.hero p { font-size:1.2rem; line-height:1.6; max-width:700px; margin-bottom:30px; opacity:0.9; }
-.hero .cta-btn {
-  display:inline-block; padding:16px 40px; border-radius:30px; border:2px solid var(--or);
-  font-weight:600; color:var(--or); transition:all var(--transition);
-}
-.hero .cta-btn:hover { background:var(--or); color:var(--gris-fonce); box-shadow:0 0 25px rgba(212,160,23,0.3); }
+  margin-bottom:20px; }
+.hero p { font-size:1.2rem; line-height:1.6; max-width:700px; margin-bottom:30px; opacity:0.9;}
+.hero .cta-btn { display:inline-block; padding:16px 40px; border-radius:30px; border:2px solid var(--or);
+  font-weight:600; color:var(--or); transition:all var(--transition);}
+.hero .cta-btn:hover { background:var(--or); color:var(--gris-fonce); box-shadow:0 0 25px rgba(212,160,23,0.3);}
 
-/* SECTION LABELS */
-.section-label { text-transform:uppercase; color: var(--or); letter-spacing:0.2em; font-weight:600; margin-bottom:10px; display:block; }
-.section-title { font-size:2rem; margin-bottom:16px; }
+/* SECTIONS */
+.section-label { text-transform:uppercase; color:var(--or); letter-spacing:0.2em; font-weight:600; margin-bottom:10px; display:block;}
+.section-title { font-family:'Cinzel',serif; font-size:2rem; margin-bottom:16px; }
 .section-desc { font-size:1rem; opacity:0.8; max-width:800px; margin-bottom:32px; }
 
 /* ARTICLES GRID */
-.articles-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:24px; }
-.article-card { background: var(--gris-clair); border-radius: var(--radius); padding:24px; transition: all var(--transition); cursor:pointer; }
+.articles-grid {
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:24px; margin-top:40px;
+}
+.article-card {
+  background:var(--gris-clair); border-radius:var(--radius); padding:24px;
+  transition: all var(--transition); cursor:pointer; opacity:0; transform:translateY(20px);
+}
+.article-card.show { opacity:1; transform:translateY(0); }
 .article-card:hover { transform:translateY(-5px); box-shadow:0 15px 30px rgba(0,0,0,0.08); }
 .article-card h3 { margin-bottom:12px; color: var(--violet); }
 .article-card p { font-size:0.95rem; line-height:1.4; opacity:0.85; }
-.article-card .card-link { color: var(--or); font-weight:600; margin-top:12px; display:inline-block; }
+.article-card .card-link { color:var(--or); font-weight:600; margin-top:12px; display:inline-block; }
+
+/* MODAL */
+.modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:2000; justify-content:center; align-items:center; padding:20px; overflow:auto; }
+.modal-content { background:#fff; border-radius:var(--radius); max-width:800px; width:100%; padding:32px; position:relative; }
+.modal-content h2 { margin-bottom:16px; }
+.modal-content p { margin-bottom:16px; line-height:1.6; }
+.modal-close { position:absolute; top:12px; right:12px; font-size:1.5rem; cursor:pointer; color:var(--violet); }
 
 /* DÉFI */
-.defi-section { display:flex; flex-wrap:wrap; background: var(--violet); color:var(--blanc); border-radius: var(--radius); overflow:hidden; margin-bottom:40px; }
+.defi-section { display:flex; flex-wrap:wrap; background:var(--violet); color:var(--blanc); border-radius:var(--radius); overflow:hidden; }
 .defi-section > div { flex:1 1 400px; padding:40px; }
 .defi-title { font-size:1.8rem; margin-bottom:16px; }
 .defi-text { font-size:1rem; opacity:0.9; line-height:1.5; }
-.defi-actions a { margin-right:12px; }
 
 /* SOLIDARITÉ */
-.solidarite-grid { display:grid; grid-template-columns: repeat(auto-fit,minmax(280px,1fr)); gap:24px; }
-.solidarite-card { background: var(--gris-clair); border-radius: var(--radius); padding:24px; transition: all var(--transition); }
+.solidarite-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:24px; margin-top:40px; }
+.solidarite-card { background: var(--gris-clair); border-radius: var(--radius); padding:24px; transition: all var(--transition); opacity:0; transform:translateY(20px);}
+.solidarite-card.show { opacity:1; transform:translateY(0);}
 .solidarite-card:hover { transform:translateY(-5px); box-shadow:0 15px 25px rgba(0,0,0,0.08); }
 .solidarite-card h3 { color: var(--violet); margin-bottom:12px; }
 .solidarite-card p { font-size:0.95rem; line-height:1.4; }
 
 /* NEWSLETTER */
-.newsletter-section { background: var(--or); color:var(--gris-fonce); padding:60px 20px; border-radius: var(--radius); text-align:center; }
-.newsletter-section h2 { font-size:2rem; margin-bottom:16px; color:#fff; }
+.newsletter-section { background:var(--or); color:var(--gris-fonce); padding:60px 20px; border-radius:var(--radius); text-align:center;}
+.newsletter-section h2 { font-size:2rem; margin-bottom:16px; color:#fff;}
 .newsletter-section input[type="email"] { padding:12px 20px; border-radius:30px; border:none; margin-right:12px; width:250px; max-width:80%; }
-.newsletter-section button { padding:12px 28px; border:none; border-radius:30px; background:var(--violet); color:#fff; font-weight:600; cursor:pointer; }
+.newsletter-section button { padding:12px 28px; border:none; border-radius:30px; background:var(--violet); color:#fff; font-weight:600; cursor:pointer;}
 .newsletter-section button:hover { background:#36215c; }
 
-/* FOOTER */
-footer { background: var(--violet); color: var(--blanc); padding:60px 40px; display:flex; flex-wrap:wrap; justify-content:space-between; gap:40px; }
-footer h4 { color: var(--or); margin-bottom:12px; font-family:'Cinzel', serif; letter-spacing:0.1em; }
-footer a { color: var(--blanc); transition:all var(--transition); }
-footer a:hover { color: var(--or-clair); }
-.footer-bottom { text-align:center; margin-top:40px; font-size:0.8rem; color: rgba(255,255,255,0.7); }
-
-/* RESPONSIVE */
-@media(max-width:768px){ .defi-section { flex-direction:column; } .articles-grid,.solidarite-grid { grid-template-columns:1fr; } nav { flex-direction:column; gap:12px; padding:14px 20px; } .nav-links { flex-wrap:wrap; justify-content:center; gap:14px; } footer { flex-direction:column; text-align:center; } }
+@media(max-width:768px){
+  .defi-section { flex-direction:column;}
+  .articles-grid, .solidarite-grid { grid-template-columns:1fr;}
+}
 </style>
 </head>
 <body>
 
 <nav>
-  <a href="#hero" class="nav-logo">Influençons<em>.com</em></a>
+  <a href="#" class="nav-logo">Influençons<em>.com</em></a>
   <ul class="nav-links">
-    <li><a href="#hero">Accueil</a></li>
     <li><a href="#articles">Articles</a></li>
     <li><a href="#defis">Défis</a></li>
     <li><a href="#solidarite">Solidarité</a></li>
@@ -117,7 +123,7 @@ footer a:hover { color: var(--or-clair); }
 </nav>
 
 <!-- HERO -->
-<section class="hero" id="hero">
+<section class="hero">
   <h1>Influençons<span style="color:var(--or)">.</span></h1>
   <p>« Vous êtes la <strong>lumière du monde</strong>. Une ville sur une montagne ne peut être cachée. »<br><em>Matthieu 5:14</em></p>
   <a href="#articles" class="cta-btn">Découvrir le blog</a>
@@ -127,14 +133,14 @@ footer a:hover { color: var(--or-clair); }
 <section id="articles">
   <span class="section-label">Réflexions & Inspirations</span>
   <h2 class="section-title">Derniers Articles</h2>
-  <p class="section-desc">Des textes pour nourrir l'âme et grandir dans la bienveillance.</p>
+  <p class="section-desc">Des textes pour nourrir l'âme, questionner le regard et grandir dans la bienveillance.</p>
   <div class="articles-grid">
     {% for art in articles %}
-    <div class="article-card" id="article-{{ art.slug }}" onclick="window.location='#article-{{ art.slug }}'">
-  <h3>{{ art.title }}</h3>
-  <p>{{ art.excerpt or '' }}</p>
-  <a href="#article-{{ art.slug }}" class="card-link">Lire l'article →</a>
-</div>>
+    <div class="article-card" id="article-{{ art.slug }}" onclick="openModal('{{ art.title|escape }}','{{ art.content|escape }}')">
+      <h3>{{ art.title }}</h3>
+      <p>{{ art.excerpt or '' }}</p>
+      <a href="javascript:void(0)" class="card-link">Lire →</a>
+    </div>
     {% else %}
     <div style="grid-column:span 3; text-align:center; opacity:0.5;">
       <p>Les premiers articles arrivent bientôt…</p>
@@ -143,17 +149,25 @@ footer a:hover { color: var(--or-clair); }
   </div>
 </section>
 
+<!-- MODAL ARTICLE -->
+<div class="modal" id="article-modal">
+  <div class="modal-content">
+    <span class="modal-close" onclick="closeModal()">&times;</span>
+    <h2 id="modal-title"></h2>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
 <!-- DÉFI -->
+{% if defi %}
 <section class="defi-section" id="defis">
   <div>
     <span class="section-label">Défi du moment</span>
-    <h2 class="defi-title">{{ defi.title if defi else 'Prochain défi bientôt…' }}</h2>
-    <p class="defi-text">{{ defi.description if defi else 'Restez connecté pour relever le défi de la semaine !' }}</p>
-    <div class="defi-actions">
-      <a href="#defis" class="cta-btn">Je relève le défi</a>
-    </div>
+    <h2 class="defi-title">{{ defi.title }}</h2>
+    <p class="defi-text">{{ defi.description }}</p>
   </div>
 </section>
+{% endif %}
 
 <!-- SOLIDARITÉ -->
 <section id="solidarite">
@@ -187,28 +201,28 @@ footer a:hover { color: var(--or-clair); }
   </form>
 </section>
 
-<!-- FOOTER -->
-<footer>
-  <div>
-    <h4>Influençons.com</h4>
-    <p>Blog chrétien pour vivre avec sens, bienveillance et amour du prochain.</p>
-    <p style="font-style:italic; color: var(--or-clair);">« Influençons Autrement »</p>
-  </div>
-  <div>
-    <h4>Navigation</h4>
-    <a href="#hero">Accueil</a><br>
-    <a href="#articles">Articles</a><br>
-    <a href="#defis">Défis & Challenges</a><br>
-    <a href="#solidarite">Solidarité</a><br>
-    <a href="#newsletter">Newsletter</a>
-  </div>
-  <div>
-    <h4>Contact</h4>
-    <p>Evelyne Koffi</p>
-    <p>Abidjan, Côte d'Ivoire 🇨🇮</p>
-  </div>
-</footer>
-<div class="footer-bottom">© 2025 Influençons.com — Tous droits réservés · Fondé par Evelyne Koffi</div>
+<script>
+// ANIMATION AU SCROLL
+const observer = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){ entry.target.classList.add('show'); }
+  });
+},{ threshold:0.1 });
+document.querySelectorAll('.article-card, .solidarite-card').forEach(el=>observer.observe(el));
+
+// MODAL ARTICLE
+function openModal(title, content){
+  document.getElementById('modal-title').innerText = title;
+  document.getElementById('modal-body').innerHTML = content;
+  document.getElementById('article-modal').style.display = 'flex';
+}
+function closeModal(){
+  document.getElementById('article-modal').style.display = 'none';
+}
+window.onclick = function(e){
+  if(e.target.id==='article-modal'){ closeModal(); }
+}
+</script>
 
 </body>
 </html>
