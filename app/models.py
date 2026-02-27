@@ -37,6 +37,7 @@ class Defi(db.Model):
     step3_desc = db.Column(db.String(200))
     is_active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    link = db.Column(db.String(255), nullable=True)
 
 class SolidariteAction(db.Model):
     __tablename__ = 'solidarite_actions'
