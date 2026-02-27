@@ -1,373 +1,255 @@
 {% extends 'base.html' %}
 {% block title %}Influençons.com — Influençons Autrement{% endblock %}
+
 {% block extra_css %}
 <style>
+/* VARIABLES */
+:root {
+  --violet-principal: #4B2E83;
+  --or-principal: #D4AF37;
+  --or-clair: #F3E1A3;
+  --blanc: #ffffff;
+  --gris-fonce: #1c1c1c;
+  --gris-clair: #f5f5f5;
+  --transition: 0.35s ease;
+  --radius-card: 12px;
+}
+
+/* RESET BASIQUE */
+body, html { margin:0; padding:0; font-family: 'Poppins', sans-serif; color: var(--gris-fonce); background-color: #fff; }
+a { text-decoration:none; color: inherit; }
+section { padding:80px 20px; max-width:1200px; margin:0 auto; }
+
+/* HERO */
 .hero {
-  position: relative;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 120px 40px 60px;
-  z-index: 1;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  min-height:100vh;
+  background: linear-gradient(135deg, #4B2E83 0%, #7A5AB8 100%);
+  color: var(--blanc);
+  position:relative;
+  overflow:hidden;
 }
 
-/* Ornement plus doux */
-.hero-ornement {
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(ellipse 70% 55% at 50% 38%, rgba(124,90,184,0.25) 0%, transparent 70%),
-    radial-gradient(ellipse 35% 35% at 50% 32%, rgba(200,166,70,0.12) 0%, transparent 55%);
-  pointer-events: none;
-}
-
-/* FLAMME plus élégante */
-.flame-container {
-  position: relative;
-  width: 70px;
-  height: 100px;
-  margin: 0 auto 30px;
-}
-
-.flame {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 45px;
-  height: 75px;
-  background: radial-gradient(
-    ellipse at 50% 100%,
-    #fff6c4 0%,
-    var(--or-clair) 40%,
-    var(--or) 70%,
-    transparent 100%
-  );
-  border-radius: 50% 50% 35% 35%;
-  animation: flicker 2s ease-in-out infinite alternate;
-  filter: drop-shadow(0 0 18px rgba(200,166,70,0.7));
-}
-
-@keyframes flicker {
-  0% { transform: translateX(-50%) scale(1) rotate(-1deg); }
-  100% { transform: translateX(-50%) scale(0.96) rotate(1deg); }
-}
-
-/* TITRES */
-.hero-subtitle {
-  font-size: 0.8rem;
-  letter-spacing: 0.45em;
-  color: var(--or-clair);
-  text-transform: uppercase;
-  margin-bottom: 24px;
-  opacity: 0.9;
-}
-
-.hero-title {
+.hero h1 {
   font-family: 'Cinzel', serif;
-  font-size: clamp(2.6rem, 7vw, 5rem);
-  font-weight: 700;
-  line-height: 1.1;
-  background: linear-gradient(
-    135deg,
-    var(--or-pale) 0%,
-    var(--or) 60%,
-    var(--or-clair) 100%
-  );
+  font-size: clamp(3rem, 8vw, 5rem);
+  background: linear-gradient(90deg, var(--or-clair), var(--or-principal));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  background-clip: text;
   margin-bottom: 20px;
 }
 
-.hero-title-dot {
-  color: var(--violet-moyen);
-  -webkit-text-fill-color: var(--violet-moyen);
+.hero p {
+  font-size:1.2rem;
+  line-height:1.6;
+  max-width:700px;
+  margin-bottom:30px;
+  opacity:0.9;
 }
 
-/* VERSET plus sobre */
-.hero-verse {
-  font-family: 'Playfair Display', serif;
-  font-style: italic;
-  font-size: clamp(1.2rem, 3vw, 1.8rem);
-  color: rgba(255,255,255,0.9);
-  margin-bottom: 10px;
-  line-height: 1.5;
-  max-width: 800px;
+.hero .cta-btn {
+  display:inline-block;
+  padding:16px 40px;
+  border-radius:30px;
+  border:2px solid var(--or-principal);
+  font-weight:600;
+  color: var(--or-principal);
+  transition: all var(--transition);
+}
+.hero .cta-btn:hover {
+  background: var(--or-principal);
+  color: var(--gris-fonce);
+  box-shadow: 0 0 25px rgba(212,160,23,0.3);
 }
 
-.hero-verse strong {
-  color: var(--or-clair);
-  font-style: normal;
+/* ANIMATIONS LÉGÈRES */
+.hero::after {
+  content:'';
+  position:absolute;
+  top:0; left:0; width:100%; height:100%;
+  background: radial-gradient(circle at top center, rgba(255,255,255,0.08), transparent 70%);
+  pointer-events:none;
 }
 
-.hero-verse-ref {
-  font-family: 'Cinzel', serif;
-  font-size: 0.65rem;
-  letter-spacing: 0.35em;
-  color: rgba(200,166,70,0.7);
+/* ARTICLES */
+.articles-grid {
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap:24px;
+  margin-top:40px;
+}
+
+.article-card {
+  background: var(--gris-clair);
+  border-radius: var(--radius-card);
+  padding:24px;
+  transition: all var(--transition);
+  cursor:pointer;
+}
+.article-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+}
+.article-card h3 { margin-bottom:12px; color: var(--violet-principal); }
+.article-card p { font-size:0.95rem; line-height:1.4; opacity:0.85; }
+.article-card .card-link { color: var(--or-principal); font-weight:600; margin-top:12px; display:inline-block; }
+
+/* SECTION LABELS */
+.section-label {
   text-transform: uppercase;
-  margin-bottom: 40px;
-  display: block;
+  color: var(--or-principal);
+  letter-spacing: 0.2em;
+  font-weight:600;
+  margin-bottom:10px;
+  display:block;
 }
+.section-title { font-size:2rem; margin-bottom:16px; }
+.section-desc { font-size:1rem; opacity:0.8; max-width:800px; margin-bottom:32px; }
 
-/* CTA plus premium */
-.hero-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 36px;
-  border: 1px solid var(--or);
-  color: var(--or);
-  font-family: 'Cinzel', serif;
-  font-size: 0.75rem;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  text-decoration: none;
-  border-radius: 6px;
-  transition: all 0.4s ease;
+/* DÉFI */
+.defi-section {
+  display:flex;
+  flex-wrap:wrap;
+  background: var(--violet-principal);
+  color: var(--blanc);
+  border-radius: var(--radius-card);
+  overflow:hidden;
 }
+.defi-section > div { flex:1 1 400px; padding:40px; }
+.defi-title { font-size:1.8rem; margin-bottom:16px; }
+.defi-text { font-size:1rem; opacity:0.9; line-height:1.5; }
+.defi-actions a { margin-right:12px; }
 
-.hero-cta:hover {
-  background: rgba(200,166,70,0.12);
-  box-shadow: 0 0 25px rgba(200,166,70,0.25);
+/* SOLIDARITÉ */
+.solidarite-grid {
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap:24px;
+  margin-top:40px;
 }
-
-/* Scroll indicator plus discret */
-.scroll-indicator {
-  position: absolute;
-  bottom: 40px;
-  left: 50%;
-  transform: translateX(-50%);
-  opacity: 0.4;
+.solidarite-card {
+  background: var(--gris-clair);
+  border-radius: var(--radius-card);
+  padding:24px;
+  transition: all var(--transition);
 }
+.solidarite-card:hover { transform: translateY(-5px); box-shadow: 0 15px 25px rgba(0,0,0,0.08); }
+.solidarite-card h3 { color: var(--violet-principal); margin-bottom:12px; }
+.solidarite-card p { font-size:0.95rem; line-height:1.4; }
 
-.scroll-line {
-  width: 1px;
-  height: 40px;
-  background: linear-gradient(to bottom, var(--or), transparent);
+/* NEWSLETTER */
+.newsletter-section {
+  background: var(--or-principal);
+  color: var(--gris-fonce);
+  padding:60px 20px;
+  border-radius: var(--radius-card);
+  text-align:center;
+}
+.newsletter-section h2 { font-size:2rem; margin-bottom:16px; color:#fff; }
+.newsletter-section input[type="email"] {
+  padding:12px 20px;
+  border-radius:30px;
+  border:none;
+  margin-right:12px;
+  width:250px;
+  max-width:80%;
+}
+.newsletter-section button {
+  padding:12px 28px;
+  border:none;
+  border-radius:30px;
+  background: var(--violet-principal);
+  color:#fff;
+  font-weight:600;
+  cursor:pointer;
+}
+.newsletter-section button:hover { background:#36215c; }
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .defi-section { flex-direction:column; }
+  .articles-grid, .solidarite-grid { grid-template-columns:1fr; }
 }
 </style>
 {% endblock %}
+
 {% block content %}
 
 <!-- HERO -->
-<section class="hero" style="max-width:100%; padding-top:120px;">
-  <div class="hero-ornement"></div>
-  <div class="stars-container" id="starsContainer"></div>
-  <div class="flame-container">
-    <span class="cross-icon">✝</span>
-    <div class="flame"></div>
-  </div>
-  <span class="hero-subtitle">✦ Influençons Autrement ✦</span>
-  <h1 class="hero-title">Influençons<span class="hero-title-dot">.</span></h1>
-  <p class="hero-verse">
-    « Vous êtes la <strong>lumière du monde</strong>.<br>
-    Une ville située sur une montagne ne peut être cachée. »
-  </p>
-  <span class="hero-verse-ref">Matthieu 5 : 14</span>
-  <a href="{{ url_for('main.articles') }}" class="hero-cta">Découvrir le blog ✦</a>
-  <div class="scroll-indicator">
-    <span>Défiler</span>
-    <div class="scroll-line"></div>
-  </div>
+<section class="hero">
+  <h1>Influençons<span style="color:var(--or-principal)">.</span></h1>
+  <p>« Vous êtes la <strong>lumière du monde</strong>. Une ville sur une montagne ne peut être cachée. »<br><em>Matthieu 5:14</em></p>
+  <a href="{{ url_for('main.articles') }}" class="cta-btn">Découvrir le blog</a>
 </section>
-
-<div class="full-divider"></div>
 
 <!-- ARTICLES -->
 <section>
-  <span class="section-label">✦ Réflexions & Inspirations</span>
+  <span class="section-label">Réflexions & Inspirations</span>
   <h2 class="section-title">Derniers Articles</h2>
-  <p class="section-desc">Des textes pour nourrir l'âme, questionner le regard et grandir dans la bienveillance au quotidien.</p>
+  <p class="section-desc">Des textes pour nourrir l'âme, questionner le regard et grandir dans la bienveillance.</p>
   <div class="articles-grid">
     {% for art in articles %}
     <div class="article-card" onclick="window.location='{{ url_for('main.article', slug=art.slug) }}'">
-      <span class="card-tag">{{ art.tag or 'Réflexion' }}</span>
-      <h3 class="card-title">{{ art.title }}</h3>
-      <p class="card-excerpt">{{ art.excerpt or '' }}</p>
+      <h3>{{ art.title }}</h3>
+      <p>{{ art.excerpt or '' }}</p>
       <a href="{{ url_for('main.article', slug=art.slug) }}" class="card-link">Lire l'article →</a>
     </div>
     {% else %}
-    <div class="article-card" style="grid-column:span 3; text-align:center; opacity:0.5;">
-      <p>Les premiers articles arrivent bientôt... ✦</p>
+    <div style="grid-column:span 3; text-align:center; opacity:0.5;">
+      <p>Les premiers articles arrivent bientôt…</p>
     </div>
     {% endfor %}
   </div>
-  {% if articles %}
-  <div style="text-align:center; margin-top:40px;">
-    <a href="{{ url_for('main.articles') }}" class="btn-outline">Voir tous les articles</a>
-  </div>
-  {% endif %}
 </section>
-
-<div class="full-divider"></div>
 
 <!-- DÉFI -->
 {% if defi %}
-<div class="defi-section" id="defis">
-  <span class="defi-number">01</span>
+<section class="defi-section">
   <div>
-    <span class="defi-badge">✦ Défi du moment</span>
+    <span class="section-label">Défi du moment</span>
     <h2 class="defi-title">{{ defi.title }}</h2>
     <p class="defi-text">{{ defi.description }}</p>
     <div class="defi-actions">
-      <a href="#defis" class="btn-primary" onclick="this.closest('.defi-section').querySelector('.defi-step') && window.scrollTo({top: document.getElementById('defis').offsetTop, behavior:'smooth'}); return false;">Je relève le défi</a>
-      <a href="#defis" class="btn-outline">Voir tous les défis</a>
+      <a href="#defis" class="cta-btn">Je relève le défi</a>
     </div>
   </div>
-  <div class="defi-visual">
-    {% if defi.step1_title %}
-    <div class="defi-step">
-      <span class="step-num">01</span>
-      <div class="step-text"><strong>{{ defi.step1_title }}</strong><span>{{ defi.step1_desc }}</span></div>
-    </div>
-    {% endif %}
-    {% if defi.step2_title %}
-    <div class="defi-step">
-      <span class="step-num">02</span>
-      <div class="step-text"><strong>{{ defi.step2_title }}</strong><span>{{ defi.step2_desc }}</span></div>
-    </div>
-    {% endif %}
-    {% if defi.step3_title %}
-    <div class="defi-step">
-      <span class="step-num">03</span>
-      <div class="step-text"><strong>{{ defi.step3_title }}</strong><span>{{ defi.step3_desc }}</span></div>
-    </div>
-    {% endif %}
-  </div>
-</div>
-<div class="full-divider"></div>
+</section>
 {% endif %}
 
 <!-- SOLIDARITÉ -->
-<section id="solidarite">
-  <span class="section-label">✦ Agir ensemble</span>
+<section>
+  <span class="section-label">Agir Ensemble</span>
   <h2 class="section-title">Solidarité</h2>
-  <p class="section-desc">Des actions concrètes pour toucher des vies. Ensemble, nous pouvons faire une différence durable.</p>
+  <p class="section-desc">Des actions concrètes pour toucher des vies et faire une différence durable.</p>
   <div class="solidarite-grid">
     {% for action in solidarite %}
-    <div class="solidarite-card {% if action.is_featured %}featured{% endif %}">
-      <div>
-        <div class="solidarite-icon">
-          {% if action.icon_type == 'light' %}🕯️{% elif action.icon_type == 'hands' %}🤝{% elif action.icon_type == 'book' %}📖{% else %}💛{% endif %}
-        </div>
-        <h3>{{ action.title }}</h3>
-        <p>{{ action.description }}</p>
-        {% if action.progress %}
-        <div class="progress-bar-wrap">
-          <div class="progress-label"><span>Progression</span><span>{{ action.progress }}%</span></div>
-          <div class="progress-bar"><div class="progress-fill" style="width:{{ action.progress }}%"></div></div>
-        </div>
-        <a href="#" class="btn-primary" style="margin-top:16px; display:inline-block;">Soutenir cette action</a>
-        {% else %}
-        <a href="#" class="card-link">En savoir plus →</a>
-        {% endif %}
-      </div>
-      {% if action.is_featured %}
-      <div>
-        <div class="solidarite-icon">🤝</div>
-        <h3>Rejoindre les bénévoles</h3>
-        <p>Vous avez du temps, une compétence ou une envie de servir ? Nous avons besoin de vous.</p>
-        <a href="#" class="card-link">Devenir bénévole →</a>
-      </div>
-      {% endif %}
+    <div class="solidarite-card">
+      <h3>{{ action.title }}</h3>
+      <p>{{ action.description }}</p>
+      <a href="#" class="card-link">En savoir plus →</a>
     </div>
     {% else %}
-    <div class="solidarite-card" style="grid-column:span 2; text-align:center; opacity:0.5;">
-      <p>Les actions de solidarité arrivent bientôt... ✦</p>
+    <div style="text-align:center; opacity:0.5;">
+      <p>Les actions de solidarité arrivent bientôt…</p>
     </div>
     {% endfor %}
   </div>
 </section>
-
-<div class="full-divider"></div>
-
-<!-- FORUM -->
-<section id="forum">
-  <span class="section-label">✦ Communauté & Échanges</span>
-  <h2 class="section-title">Forum</h2>
-  <p class="section-desc">Un espace pour poser vos questions, partager vos préoccupations et grandir ensemble.</p>
-  <div class="forum-toolbar">
-    <div class="forum-search">
-      <span>⌕</span>
-      <input type="text" placeholder="Rechercher un sujet…">
-    </div>
-  </div>
-  <div class="forum-categories">
-    <button class="forum-cat active">Tous</button>
-    <button class="forum-cat">Foi & Questions</button>
-    <button class="forum-cat">Témoignages</button>
-    <button class="forum-cat">Solidarité</button>
-    <button class="forum-cat">Défis</button>
-  </div>
-  <div class="forum-list">
-    {% for topic in topics %}
-    <div class="forum-topic {% if topic.is_pinned %}pinned{% endif %}">
-      <div class="topic-icon">{% if topic.is_pinned %}📌{% elif topic.is_hot %}✨{% else %}💬{% endif %}</div>
-      <div class="topic-body">
-        <div class="topic-meta">
-          {% if topic.is_pinned %}<span class="topic-badge pin">Épinglé</span>{% endif %}
-          {% if topic.category %}<span class="topic-badge cat">{{ topic.category }}</span>{% endif %}
-          {% if topic.is_hot %}<span class="topic-badge hot">🔥 Populaire</span>{% endif %}
-        </div>
-        <h3 class="topic-title">{{ topic.title }}</h3>
-        <p class="topic-excerpt">{{ topic.excerpt or '' }}</p>
-        <div class="topic-footer">
-          <span class="topic-author">{{ topic.author_name or 'Anonyme' }}</span>
-          <span class="topic-dot">·</span>
-          <span class="topic-date">{{ topic.created_at.strftime('%d/%m/%Y') }}</span>
-          <span class="topic-dot">·</span>
-          <span class="topic-replies">{{ topic.reply_count }} réponses</span>
-        </div>
-      </div>
-      <div class="topic-stats">
-        <span class="stat-num">{{ topic.reply_count }}</span>
-        <span class="stat-label">réponses</span>
-      </div>
-    </div>
-    {% else %}
-    <div style="text-align:center; padding:40px; opacity:0.5;">
-      <p>Le forum ouvrira bientôt... ✦</p>
-    </div>
-    {% endfor %}
-  </div>
-</section>
-
-<div class="full-divider"></div>
 
 <!-- NEWSLETTER -->
-<div class="newsletter-section" id="newsletter">
-  <span class="section-label" style="display:block; text-align:center;">✦ Restez inspiré(e)</span>
-  <h2 class="section-title">Recevez la lumière<br>chaque semaine</h2>
-  <p class="section-desc" style="max-width:100%; text-align:center; margin-bottom:0;">Articles, défis et nouvelles de la communauté directement dans votre boîte mail.</p>
+<section class="newsletter-section">
+  <span class="section-label">Restez inspiré(e)</span>
+  <h2>Recevez la lumière chaque semaine</h2>
+  <p>Articles, défis et nouvelles directement dans votre boîte mail.</p>
   <form class="newsletter-form" method="POST" action="{{ url_for('main.newsletter_subscribe') }}">
     <input type="hidden" name="csrf_token" value="">
     <input type="email" name="email" placeholder="Votre adresse email…" required>
     <button type="submit">S'abonner</button>
   </form>
-  <p class="newsletter-note">✦ Aucun spam. Désabonnement en un clic.</p>
-</div>
-
-<script>
-(function() {
-  const container = document.getElementById('starsContainer');
-  if (!container) return;
-  for (let i = 0; i < 80; i++) {
-    const star = document.createElement('div');
-    star.className = 'star';
-    const size = Math.random() * 3 + 1;
-    const dur = (Math.random() * 3 + 1.5).toFixed(2);
-    const delay = (Math.random() * 4).toFixed(2);
-    const maxOp = (Math.random() * 0.5 + 0.5).toFixed(2);
-    const isGolden = Math.random() < 0.25;
-    star.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--dur:${dur}s;--max-op:${maxOp};animation-delay:${delay}s;background:${isGolden?'rgba(212,160,23,0.9)':'#fff'};box-shadow:0 0 ${size*2}px ${isGolden?'rgba(212,160,23,0.8)':'rgba(255,255,255,0.8)'};`;
-    container.appendChild(star);
-  }
-})();
-</script>
+</section>
 
 {% endblock %}
