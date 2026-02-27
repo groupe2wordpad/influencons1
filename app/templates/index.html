@@ -635,7 +635,9 @@ footer::after {
     {% if defi %}
     <h2>{{ defi.title }}</h2>
     <p>{{ defi.description }}</p>
-    <button class="defi-cta">Relever le défi ↗</button>
+    <a href="{{ defi.link or 'https://defis.influencons.com' }}" target="_blank" class="defi-cta">
+      Relever le défi ↗
+    </a>
     {% else %}
     <h2>Un nouveau défi arrive bientôt…</h2>
     <p>Revenez régulièrement pour découvrir les prochains défis de la communauté.</p>
