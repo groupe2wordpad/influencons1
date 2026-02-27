@@ -52,6 +52,7 @@
           <th>Titre</th>
           <th>Statut</th>
           <th>Date</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -68,10 +69,14 @@
             </span>
           </td>
           <td class="date-cell">{{ art.created_at.strftime('%d/%m/%Y') }}</td>
+          <td class="actions-cell">
+            <a href="{{ url_for('admin.article_edit', id=art.id) }}" class="action-btn action-btn--edit" title="Modifier">✏️</a>
+            <button onclick="confirmDelete('{{ url_for('admin.article_delete', id=art.id) }}', '{{ art.title[:30] | e }}')" class="action-btn action-btn--delete" title="Supprimer">🗑️</button>
+          </td>
         </tr>
         {% else %}
         <tr>
-          <td colspan="3" class="empty-row">Aucun article pour le moment</td>
+          <td colspan="4" class="empty-row">Aucun article pour le moment</td>
         </tr>
         {% endfor %}
       </tbody>
@@ -90,6 +95,7 @@
           <th>Email</th>
           <th>Date</th>
           <th>Statut</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -102,10 +108,14 @@
               {% if sub.is_active %}Actif{% else %}Inactif{% endif %}
             </span>
           </td>
+          <td class="actions-cell">
+            <a href="{{ url_for('admin.newsletter_toggle', id=sub.id) }}" class="action-btn action-btn--edit" title="Activer / Désactiver">🔄</a>
+            <button onclick="confirmDelete('{{ url_for('admin.newsletter_delete', id=sub.id) }}', '{{ sub.email | e }}')" class="action-btn action-btn--delete" title="Supprimer">🗑️</button>
+          </td>
         </tr>
         {% else %}
         <tr>
-          <td colspan="3" class="empty-row">Aucun abonné pour le moment</td>
+          <td colspan="4" class="empty-row">Aucun abonné pour le moment</td>
         </tr>
         {% endfor %}
       </tbody>
@@ -114,7 +124,64 @@
 
 </div>
 
-<!-- ─── ACTIONS RAPIDES ───────────────────────────────────── -->
+<!-- ─── DÉFIS & SOLIDARITÉ ────────────────────────────────── -->
+<div class="dashboard-grid" style="margin-top:1.5rem;">
+
+  <!-- Défis -->
+  <div class="table-wrap">
+    <div class="table-header">
+      <h3>Défis actifs</h3>
+      <a href="{{ url_for('admin.defi_new') }}" class="btn btn-gold">+ Nouveau</a>
+    </div>
+    <table>
+      <thead>
+        <tr><th>Titre</th><th>Statut</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        {% for defi in recent_defis %}
+        <tr>
+          <td><a href="{{ url_for('admin.defi_edit', id=defi.id) }}" class="table-link">{{ defi.title[:40] }}{% if defi.title|length > 40 %}…{% endif %}</a></td>
+          <td><span class="badge {% if defi.is_active %}badge-success{% else %}badge-muted{% endif %}">{% if defi.is_active %}Actif{% else %}Inactif{% endif %}</span></td>
+          <td class="actions-cell">
+            <a href="{{ url_for('admin.defi_edit', id=defi.id) }}" class="action-btn action-btn--edit" title="Modifier">✏️</a>
+            <button onclick="confirmDelete('{{ url_for('admin.defi_delete', id=defi.id) }}', '{{ defi.title[:30] | e }}')" class="action-btn action-btn--delete" title="Supprimer">🗑️</button>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="3" class="empty-row">Aucun défi pour le moment</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Solidarité -->
+  <div class="table-wrap">
+    <div class="table-header">
+      <h3>Actions de solidarité</h3>
+      <a href="{{ url_for('admin.solidarite_new') }}" class="btn btn-gold">+ Nouveau</a>
+    </div>
+    <table>
+      <thead>
+        <tr><th>Titre</th><th>Statut</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        {% for action in recent_solidarite %}
+        <tr>
+          <td><a href="{{ url_for('admin.solidarite_edit', id=action.id) }}" class="table-link">{{ action.title[:40] }}{% if action.title|length > 40 %}…{% endif %}</a></td>
+          <td><span class="badge {% if action.is_active %}badge-success{% else %}badge-muted{% endif %}">{% if action.is_active %}Active{% else %}Inactive{% endif %}</span></td>
+          <td class="actions-cell">
+            <a href="{{ url_for('admin.solidarite_edit', id=action.id) }}" class="action-btn action-btn--edit" title="Modifier">✏️</a>
+            <button onclick="confirmDelete('{{ url_for('admin.solidarite_delete', id=action.id) }}', '{{ action.title[:30] | e }}')" class="action-btn action-btn--delete" title="Supprimer">🗑️</button>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="3" class="empty-row">Aucune action pour le moment</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
 <div class="quick-actions">
   <p class="quick-actions__label">Actions rapides</p>
   <div class="quick-actions__grid">
@@ -294,7 +361,62 @@ tbody td { padding: .85rem 1.5rem; font-size: 0.88rem; }
 }
 .quick-btn__icon { font-size: 1.4rem; }
 
-/* ── Responsive ── */
+/* ── Action buttons ── */
+.actions-cell { white-space: nowrap; }
+.action-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: 8px;
+  border: none; cursor: pointer; font-size: 0.9rem;
+  text-decoration: none;
+  transition: all .2s;
+  background: transparent;
+}
+.action-btn--edit  { background: rgba(201,168,76,0.1); }
+.action-btn--edit:hover  { background: rgba(201,168,76,0.25); transform: scale(1.1); }
+.action-btn--delete { background: rgba(220,60,60,0.08); margin-left: 4px; }
+.action-btn--delete:hover { background: rgba(220,60,60,0.2); transform: scale(1.1); }
+
+/* ── Delete modal ── */
+.delete-modal-backdrop {
+  display: none; position: fixed; inset: 0; z-index: 9999;
+  background: rgba(20,12,40,0.65); backdrop-filter: blur(6px);
+  align-items: center; justify-content: center;
+}
+.delete-modal-backdrop.open { display: flex; }
+.delete-modal {
+  background: #fff; border-radius: 20px;
+  padding: 2.5rem; max-width: 420px; width: 90%;
+  text-align: center;
+  box-shadow: 0 40px 80px rgba(30,17,64,0.3);
+  animation: fadeUp .3s ease both;
+}
+.delete-modal__icon { font-size: 2.8rem; margin-bottom: 1rem; }
+.delete-modal h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem; color: var(--violet-deep, #1e1140);
+  margin-bottom: .6rem;
+}
+.delete-modal p {
+  font-size: 0.88rem; color: var(--text-light, #7a6a99);
+  line-height: 1.6; margin-bottom: 1.8rem;
+}
+.delete-modal p strong { color: var(--violet-deep, #1e1140); }
+.delete-modal__actions { display: flex; gap: .75rem; justify-content: center; }
+.btn-cancel {
+  padding: .75rem 1.8rem; border-radius: 100px;
+  border: 1px solid rgba(201,168,76,0.25);
+  background: transparent; color: var(--text-mid, #3d2d5c);
+  font-size: 0.78rem; letter-spacing: .12em; text-transform: uppercase;
+  cursor: pointer; transition: all .2s;
+}
+.btn-cancel:hover { background: var(--cream-dark, #ede8dc); }
+.btn-danger {
+  padding: .75rem 1.8rem; border-radius: 100px;
+  border: none; background: #c0392b; color: #fff;
+  font-size: 0.78rem; letter-spacing: .12em; text-transform: uppercase;
+  cursor: pointer; transition: all .2s;
+}
+.btn-danger:hover { background: #a93226; transform: translateY(-1px); }
 @media (max-width: 900px) {
   .dashboard-grid { grid-template-columns: 1fr; }
   .quick-actions__grid { grid-template-columns: repeat(2, 1fr); }
@@ -304,5 +426,40 @@ tbody td { padding: .85rem 1.5rem; font-size: 0.88rem; }
   .quick-actions__grid { grid-template-columns: 1fr 1fr; }
 }
 </style>
+
+<!-- ─── MODALE CONFIRMATION SUPPRESSION ──────────────────── -->
+<div class="delete-modal-backdrop" id="deleteModal">
+  <div class="delete-modal">
+    <div class="delete-modal__icon">🗑️</div>
+    <h3>Confirmer la suppression</h3>
+    <p>Vous êtes sur le point de supprimer :<br><strong id="deleteItemName"></strong><br>Cette action est irréversible.</p>
+    <div class="delete-modal__actions">
+      <button class="btn-cancel" onclick="closeDeleteModal()">Annuler</button>
+      <form id="deleteForm" method="POST" style="display:inline;">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() if csrf_token is defined else '' }}">
+        <button type="submit" class="btn-danger">Supprimer définitivement</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+function confirmDelete(url, name) {
+  document.getElementById('deleteItemName').textContent = name;
+  document.getElementById('deleteForm').action = url;
+  document.getElementById('deleteModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeDeleteModal() {
+  document.getElementById('deleteModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('deleteModal').addEventListener('click', function(e) {
+  if (e.target === this) closeDeleteModal();
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeDeleteModal();
+});
+</script>
 
 {% endblock %}
