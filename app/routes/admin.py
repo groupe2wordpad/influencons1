@@ -22,6 +22,22 @@ def admin_required(f):
         return f(*args, **kwargs)
     return decorated
 
+import os, uuid
+from werkzeug.utils import secure_filename
+
+UPLOAD_FOLDER = 'static/uploads'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp', 'gif'}
+
+def save_image(file):
+    if file and file.filename and '.' in file.filename:
+        ext = file.filename.rsplit('.', 1)[1].lower()
+        if ext in ALLOWED_EXTENSIONS:
+            unique_name = f"{uuid.uuid4().hex}.{ext}"
+            os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+            file.save(os.path.join(UPLOAD_FOLDER, unique_name))
+            return f"/static/uploads/{unique_name}"
+    return None
+
 # ── AUTH ──
 @admin_bp.route('/login', methods=['GET', 'POST'])
 def login():
