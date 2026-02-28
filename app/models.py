@@ -25,7 +25,7 @@ class Article(db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 class Defi(db.Model):
-    __tablename__ = 'defi'  
+    __tablename__ = 'defis'  
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
     description = db.Column(db.Text)
@@ -38,9 +38,10 @@ class Defi(db.Model):
     is_active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     link = db.Column(db.String(255), nullable=True)
+    image_url = db.Column(db.String(255), nullable=True)
 
 class SolidariteAction(db.Model):
-    __tablename__ = 'solidarite_actions'
+    __tablename__ = 'solidarite_action'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
     description = db.Column(db.Text)
@@ -49,6 +50,7 @@ class SolidariteAction(db.Model):
     is_featured = db.Column(db.Boolean, default=False)
     is_active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    image_url = db.Column(db.String(255), nullable=True)
 
 class ForumTopic(db.Model):
     __tablename__ = 'forum_topics'
