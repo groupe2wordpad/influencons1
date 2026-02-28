@@ -3,10 +3,12 @@ from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash
 from ..models import User, Article, Defi, SolidariteAction, ForumTopic, Newsletter
 from .. import db
-import re, datetime
+import re, datetime, os, uuid
+from werkzeug.utils import secure_filename
 
 admin_bp = Blueprint('admin', __name__)
 
+# ── UTILITAIRES ──
 def slugify(text):
     text = text.lower().strip()
     text = re.sub(r'[^\w\s-]', '', text)
@@ -21,9 +23,6 @@ def admin_required(f):
             return redirect(url_for('admin.login'))
         return f(*args, **kwargs)
     return decorated
-
-import os, uuid
-from werkzeug.utils import secure_filename
 
 UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp', 'gif'}
@@ -64,15 +63,23 @@ def logout():
 @admin_required
 def dashboard():
     stats = {
-        'articles': Article.query.count(),
-        'defis': Defi.query.count(),
-        'solidarite': SolidariteAction.query.count(),
-        'topics': ForumTopic.query.count(),
+        'articles':    Article.query.count(),
+        'defis':       Defi.query.count(),
+        'solidarite':  SolidariteAction.query.count(),
+        'topics':      ForumTopic.query.count(),
         'subscribers': Newsletter.query.filter_by(is_active=True).count(),
     }
-    recent_articles = Article.query.order_by(Article.created_at.desc()).limit(5).all()
+    recent_articles    = Article.query.order_by(Article.created_at.desc()).limit(5).all()
     recent_subscribers = Newsletter.query.order_by(Newsletter.created_at.desc()).limit(5).all()
-    return render_template('admin/dashboard.html', stats=stats, recent_articles=recent_articles, recent_subscribers=recent_subscribers)
+    recent_defis       = Defi.query.order_by(Defi.created_at.desc()).limit(5).all()
+    recent_solidarite  = SolidariteAction.query.order_by(SolidariteAction.created_at.desc()).limit(5).all()
+    return render_template('admin/dashboard.html',
+        stats=stats,
+        recent_articles=recent_articles,
+        recent_subscribers=recent_subscribers,
+        recent_defis=recent_defis,
+        recent_solidarite=recent_solidarite
+    )
 
 # ── ARTICLES ──
 @admin_bp.route('/articles')
@@ -87,18 +94,23 @@ def article_new():
     if request.method == 'POST':
         title = request.form.get('title')
         slug = slugify(title)
-        # ensure unique slug
         base_slug = slug
         counter = 1
         while Article.query.filter_by(slug=slug).first():
             slug = f"{base_slug}-{counter}"
             counter += 1
+
+        # Gestion image upload OU URL
+        image_file = request.files.get('image_url')
+        image = save_image(image_file) or request.form.get('image_url_text')
+
         art = Article(
-            title=title, slug=slug,
+            title=title,
+            slug=slug,
             tag=request.form.get('tag'),
             excerpt=request.form.get('excerpt'),
             content=request.form.get('content'),
-            image_url=request.form.get('image_url'),
+            image_url=image,
             is_published=bool(request.form.get('is_published'))
         )
         db.session.add(art)
@@ -112,13 +124,20 @@ def article_new():
 def article_edit(id):
     art = Article.query.get_or_404(id)
     if request.method == 'POST':
-        art.title = request.form.get('title')
-        art.tag = request.form.get('tag')
-        art.excerpt = request.form.get('excerpt')
-        art.content = request.form.get('content')
-        art.image_url = request.form.get('image_url')
+        art.title      = request.form.get('title')
+        art.tag        = request.form.get('tag')
+        art.excerpt    = request.form.get('excerpt')
+        art.content    = request.form.get('content')
         art.is_published = bool(request.form.get('is_published'))
         art.updated_at = datetime.datetime.utcnow()
+
+        # Gestion image : nouveau fichier uploadé prioritaire, sinon URL texte, sinon on garde l'existante
+        image_file = request.files.get('image_url')
+        if image_file and image_file.filename:
+            art.image_url = save_image(image_file)
+        elif request.form.get('image_url_text'):
+            art.image_url = request.form.get('image_url_text')
+
         db.session.commit()
         flash('Article mis à jour ✦', 'success')
         return redirect(url_for('admin.articles'))
@@ -144,6 +163,9 @@ def defis():
 @admin_required
 def defi_new():
     if request.method == 'POST':
+        image_file = request.files.get('image_url')
+        image = save_image(image_file) or request.form.get('image_url_text')
+
         defi = Defi(
             title=request.form.get('title'),
             description=request.form.get('description'),
@@ -153,6 +175,7 @@ def defi_new():
             step2_desc=request.form.get('step2_desc'),
             step3_title=request.form.get('step3_title'),
             step3_desc=request.form.get('step3_desc'),
+            image_url=image,
             is_active=bool(request.form.get('is_active'))
         )
         db.session.add(defi)
@@ -166,15 +189,22 @@ def defi_new():
 def defi_edit(id):
     defi = Defi.query.get_or_404(id)
     if request.method == 'POST':
-        defi.title = request.form.get('title')
+        defi.title       = request.form.get('title')
         defi.description = request.form.get('description')
         defi.step1_title = request.form.get('step1_title')
-        defi.step1_desc = request.form.get('step1_desc')
+        defi.step1_desc  = request.form.get('step1_desc')
         defi.step2_title = request.form.get('step2_title')
-        defi.step2_desc = request.form.get('step2_desc')
+        defi.step2_desc  = request.form.get('step2_desc')
         defi.step3_title = request.form.get('step3_title')
-        defi.step3_desc = request.form.get('step3_desc')
-        defi.is_active = bool(request.form.get('is_active'))
+        defi.step3_desc  = request.form.get('step3_desc')
+        defi.is_active   = bool(request.form.get('is_active'))
+
+        image_file = request.files.get('image_url')
+        if image_file and image_file.filename:
+            defi.image_url = save_image(image_file)
+        elif request.form.get('image_url_text'):
+            defi.image_url = request.form.get('image_url_text')
+
         db.session.commit()
         flash('Défi mis à jour ✦', 'success')
         return redirect(url_for('admin.defis'))
@@ -200,11 +230,15 @@ def solidarite():
 @admin_required
 def solidarite_new():
     if request.method == 'POST':
+        image_file = request.files.get('image_url')
+        image = save_image(image_file) or request.form.get('image_url_text')
+
         action = SolidariteAction(
             title=request.form.get('title'),
             description=request.form.get('description'),
             progress=int(request.form.get('progress', 0)),
             icon_type=request.form.get('icon_type', 'light'),
+            image_url=image,
             is_featured=bool(request.form.get('is_featured')),
             is_active=bool(request.form.get('is_active'))
         )
@@ -219,12 +253,19 @@ def solidarite_new():
 def solidarite_edit(id):
     action = SolidariteAction.query.get_or_404(id)
     if request.method == 'POST':
-        action.title = request.form.get('title')
+        action.title       = request.form.get('title')
         action.description = request.form.get('description')
-        action.progress = int(request.form.get('progress', 0))
-        action.icon_type = request.form.get('icon_type', 'light')
+        action.progress    = int(request.form.get('progress', 0))
+        action.icon_type   = request.form.get('icon_type', 'light')
         action.is_featured = bool(request.form.get('is_featured'))
-        action.is_active = bool(request.form.get('is_active'))
+        action.is_active   = bool(request.form.get('is_active'))
+
+        image_file = request.files.get('image_url')
+        if image_file and image_file.filename:
+            action.image_url = save_image(image_file)
+        elif request.form.get('image_url_text'):
+            action.image_url = request.form.get('image_url_text')
+
         db.session.commit()
         flash('Action mise à jour ✦', 'success')
         return redirect(url_for('admin.solidarite'))
@@ -271,14 +312,14 @@ def forum_new():
 def forum_edit(id):
     topic = ForumTopic.query.get_or_404(id)
     if request.method == 'POST':
-        topic.title = request.form.get('title')
-        topic.excerpt = request.form.get('excerpt')
-        topic.category = request.form.get('category')
+        topic.title       = request.form.get('title')
+        topic.excerpt     = request.form.get('excerpt')
+        topic.category    = request.form.get('category')
         topic.author_name = request.form.get('author_name')
-        topic.is_pinned = bool(request.form.get('is_pinned'))
-        topic.is_hot = bool(request.form.get('is_hot'))
+        topic.is_pinned   = bool(request.form.get('is_pinned'))
+        topic.is_hot      = bool(request.form.get('is_hot'))
         topic.reply_count = int(request.form.get('reply_count', 0))
-        topic.is_visible = bool(request.form.get('is_visible'))
+        topic.is_visible  = bool(request.form.get('is_visible'))
         db.session.commit()
         flash('Sujet mis à jour ✦', 'success')
         return redirect(url_for('admin.forum'))
