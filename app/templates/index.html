@@ -6,7 +6,6 @@
 <title>Influençons.com</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Jost:wght@200;300;400;500;600&display=swap" rel="stylesheet">
 <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='img/favicon.svg') }}">
-
 <style>
 
 /* ─── FLASH MESSAGES ─────────────────────────────────────── */
@@ -223,6 +222,49 @@ section { padding: 7rem 5rem; }
 
 /* empty state */
 .empty-state { grid-column: 1/-1; text-align: center; padding: 3rem; opacity: 0.45; }
+
+/* ─── ARTICLE CARD IMAGE ─────────────────────────────────── */
+.article-card-img {
+  width: 100%; height: 200px; overflow: hidden;
+  background: var(--cream-dark);
+}
+.article-card-img img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+.article-card:hover .article-card-img img { transform: scale(1.06); }
+
+/* ─── SOLIDARITÉ CARD IMAGE ──────────────────────────────── */
+.solidarite-card-img {
+  width: 100%; height: 180px; overflow: hidden;
+  border-radius: 10px; margin-bottom: 1.2rem;
+  background: var(--cream-dark);
+}
+.solidarite-card-img img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+.solidarite-card:hover .solidarite-card-img img { transform: scale(1.04); }
+
+/* ─── DÉFI IMAGE ─────────────────────────────────────────── */
+.defi-image {
+  width: 100%; max-width: 480px; margin: 0 auto 2rem;
+  border-radius: 16px; overflow: hidden;
+  border: 1px solid rgba(201,168,76,0.2);
+}
+.defi-image img { width: 100%; height: auto; display: block; }
+
+/* ─── MODAL COVER IMAGE ──────────────────────────────────── */
+.modal-cover {
+  width: 100%; max-height: 320px; overflow: hidden;
+  border-radius: 24px 24px 0 0;
+}
+.modal-cover img {
+  width: 100%; height: 320px;
+  object-fit: cover; display: block;
+}
 
 /* ─── MODAL ──────────────────────────────────────────────── */
 .modal {
@@ -553,12 +595,6 @@ footer::after {
 <!-- ═══════════════════════════════════════ NAV ════ -->
 <nav id="nav">
   <a href="#accueil" class="nav-brand">
-    <span class="flame-icon">
-      <svg width="18" height="26" viewBox="0 0 18 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M9 1C9 1 14 6.5 14 11C14 13.5 12 15 9 15C6 15 4 13.5 4 11C4 8.5 6 6 9 6C9 6 7 8 7 10C7 11.5 7.9 12.5 9 12.5C10.1 12.5 11 11.5 11 10C11 7 9 1 9 1Z" fill="#c9a84c"/>
-        <path d="M9 15C9 15 3 17 3 21.5C3 23.9 5.7 25 9 25C12.3 25 15 23.9 15 21.5C15 17 9 15 9 15Z" fill="#c9a84c" opacity="0.7"/>
-      </svg>
-    </span>
     influençons<span>.com</span>
   </a>
   <button class="burger" id="burger" aria-label="Menu" onclick="toggleMenu()">
@@ -601,9 +637,15 @@ footer::after {
     <div class="article-card fade-up" id="article-{{ art.slug }}"
          data-title="{{ art.title | e }}"
          data-content="{{ art.content | e }}"
+         data-cover="{{ art.image_url or '' }}"
          onclick="openModal(this)">
+      {% if art.image_url %}
+      <div class="article-card-img">
+        <img src="{{ art.image_url }}" alt="{{ art.title | e }}" loading="lazy">
+      </div>
+      {% endif %}
       <div class="article-card-body">
-        {% if art.category %}<span class="article-card-tag">{{ art.category }}</span>{% endif %}
+        {% if art.tag %}<span class="article-card-tag">{{ art.tag }}</span>{% endif %}
         <h3>{{ art.title }}</h3>
         <p>{{ art.excerpt or '' }}</p>
         <a href="javascript:void(0)" class="card-link">Lire l'article →</a>
@@ -620,6 +662,9 @@ footer::after {
 <!-- ════════════════════════════════ MODAL ════ -->
 <div class="modal" id="article-modal">
   <div class="modal-content">
+    <div class="modal-cover" id="modal-cover" style="display:none;">
+      <img id="modal-cover-img" src="" alt="">
+    </div>
     <div class="modal-header">
       <h2 id="modal-title"></h2>
       <button class="modal-close" onclick="closeModal()">✕</button>
@@ -633,11 +678,14 @@ footer::after {
   <div class="defi-inner fade-up">
     <span class="defi-badge">✦ Défi du moment</span>
     {% if defi %}
+    {% if defi.image_url %}
+    <div class="defi-image fade-up">
+      <img src="{{ defi.image_url }}" alt="{{ defi.title | e }}" loading="lazy">
+    </div>
+    {% endif %}
     <h2>{{ defi.title }}</h2>
     <p>{{ defi.description }}</p>
-    <a href="{{ defi.link or 'https://defis.influencons.com' }}" target="_blank" class="defi-cta">
-      Relever le défi ↗
-    </a>
+    <button class="defi-cta">Relever le défi ↗</button>
     {% else %}
     <h2>Un nouveau défi arrive bientôt…</h2>
     <p>Revenez régulièrement pour découvrir les prochains défis de la communauté.</p>
@@ -654,6 +702,11 @@ footer::after {
   <div class="solidarite-grid">
     {% for action in solidarite %}
     <div class="solidarite-card fade-up">
+      {% if action.image_url %}
+      <div class="solidarite-card-img">
+        <img src="{{ action.image_url }}" alt="{{ action.title | e }}" loading="lazy">
+      </div>
+      {% endif %}
       <h3>{{ action.title }}</h3>
       <p>{{ action.description }}</p>
       <a href="#contact" class="card-link">En savoir plus →</a>
@@ -814,19 +867,34 @@ function formatArticle(raw) {
 
 function formatInline(text) {
   return text
+    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g,
+      '<img src="$2" alt="$1" style="width:100%;border-radius:12px;margin:1.2rem 0;display:block;">')
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.+?)\*/g, '<em>$1</em>');
 }
 
 /* ── Modal ── */
 function openModal(card) {
-  const title   = card.getAttribute('data-title');
-  const raw     = card.getAttribute('data-content');
+  const title = card.getAttribute('data-title');
+  const raw   = card.getAttribute('data-content');
+  const cover = card.getAttribute('data-cover');
+
   document.getElementById('modal-title').innerText = title;
   document.getElementById('modal-body').innerHTML  = formatArticle(raw);
+
+  // Image de couverture
+  const coverEl  = document.getElementById('modal-cover');
+  const coverImg = document.getElementById('modal-cover-img');
+  if (cover) {
+    coverImg.src = cover;
+    coverImg.alt = title;
+    coverEl.style.display = 'block';
+  } else {
+    coverEl.style.display = 'none';
+  }
+
   document.getElementById('article-modal').classList.add('open');
   document.body.style.overflow = 'hidden';
-  // scroll to top
   document.querySelector('.modal-content').scrollTop = 0;
 }
 function closeModal() {
