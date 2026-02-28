@@ -22,6 +22,19 @@ def create_app():
     app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max upload
 
     db.init_app(app)
+    with app.app_context():
+        # Migration automatique des colonnes manquantes
+        from sqlalchemy import text
+        try:
+            with db.engine.connect() as conn:
+                conn.execute(text("ALTER TABLE defis ADD COLUMN IF NOT EXISTS link VARCHAR(255)"))
+                conn.execute(text("ALTER TABLE defis ADD COLUMN IF NOT EXISTS image_url VARCHAR(255)"))
+                conn.execute(text("ALTER TABLE solidarite_action ADD COLUMN IF NOT EXISTS image_url VARCHAR(255)"))
+                conn.commit()
+        except Exception as e:
+            print(f"Migration: {e}")
+    
+    return app
     login_manager.init_app(app)
     migrate.init_app(app, db)
 
@@ -43,6 +56,7 @@ def create_app():
         _create_admin()
 
     return app
+
 
 def _create_admin():
     from .models import User
