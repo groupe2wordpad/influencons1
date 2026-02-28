@@ -6,44 +6,205 @@
 {% block extra_css %}
 <style>
   .editor-note { font-size: 0.75rem; color: var(--text-muted); margin-top: 6px; }
+
+  .form-hint {
+    display: block; font-size: 0.72rem;
+    color: var(--text-muted, #7a6a99);
+    margin-top: 4px; letter-spacing: 0.03em;
+  }
+
+  /* Image preview existante */
+  .image-preview {
+    position: relative; margin-bottom: 12px;
+    border-radius: 12px; overflow: hidden;
+    border: 1px solid rgba(201,168,76,0.2);
+    max-height: 260px;
+  }
+  .image-preview img {
+    width: 100%; max-height: 260px;
+    object-fit: cover; display: block;
+  }
+  .image-preview__label {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: rgba(30,17,64,0.6);
+    color: rgba(255,255,255,0.8);
+    font-size: 0.65rem; letter-spacing: 0.15em;
+    text-transform: uppercase; text-align: center;
+    padding: 6px;
+  }
+
+  /* Upload zone */
+  .upload-zone {
+    border: 2px dashed rgba(201,168,76,0.3);
+    border-radius: 12px; padding: 1.5rem;
+    text-align: center; cursor: pointer;
+    transition: all .3s; background: rgba(201,168,76,0.03);
+    position: relative;
+  }
+  .upload-zone:hover {
+    border-color: rgba(201,168,76,0.6);
+    background: rgba(201,168,76,0.06);
+  }
+  .upload-zone input[type="file"] {
+    position: absolute; inset: 0;
+    opacity: 0; cursor: pointer; width: 100%; height: 100%;
+  }
+  .upload-zone__content {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 4px; pointer-events: none;
+  }
+  .upload-zone__icon { font-size: 1.8rem; }
+  .upload-zone__text {
+    font-size: 0.85rem; color: var(--text-mid, #3d2d5c); font-weight: 500;
+  }
+  .upload-zone__hint {
+    font-size: 0.72rem; color: var(--text-muted, #7a6a99);
+  }
+
+  /* Tabs contenu */
+  .tab-btns {
+    display: flex; gap: 8px; margin-bottom: 12px;
+  }
+  .tab-btn {
+    padding: 6px 16px; border-radius: 100px;
+    border: 1px solid rgba(201,168,76,0.25);
+    background: transparent; cursor: pointer;
+    font-size: 0.72rem; font-weight: 500;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--text-muted, #7a6a99);
+    transition: all .2s;
+  }
+  .tab-btn.active {
+    background: var(--violet-deep, #1e1140);
+    color: var(--gold, #c9a84c);
+    border-color: transparent;
+  }
 </style>
 {% endblock %}
+
 {% block content %}
 <div class="form-card">
-  <form method="POST">
+  <form method="POST" enctype="multipart/form-data">
+
+    <!-- ─── TITRE ──────────────────────────────────────────── -->
     <div class="form-group">
       <label>Titre de l'article *</label>
-      <input type="text" name="title" value="{{ item.title if item else '' }}" required placeholder="Mon article inspirant...">
+      <input type="text" name="title"
+             value="{{ item.title if item else '' }}"
+             required placeholder="Mon article inspirant...">
     </div>
-    <div class="form-grid">
-      <div class="form-group">
-        <label>Tag / Catégorie</label>
-        <input type="text" name="tag" value="{{ item.tag if item else '' }}" placeholder="Foi & Vie, Amour du Prochain...">
-      </div>
-      <div class="form-group">
-        <label>URL de l'image (optionnel)</label>
-        <input type="text" name="image_url" value="{{ item.image_url if item else '' }}" placeholder="https://...">
-      </div>
+
+    <!-- ─── TAG ───────────────────────────────────────────── -->
+    <div class="form-group">
+      <label>Tag / Catégorie</label>
+      <input type="text" name="tag"
+             value="{{ item.tag if item else '' }}"
+             placeholder="Foi & Vie, Identité, Croissance...">
     </div>
+
+    <!-- ─── IMAGE DE COUVERTURE ───────────────────────────── -->
+    <div class="form-group">
+      <label>Image de couverture</label>
+
+      {% if item and item.image_url %}
+      <div class="image-preview">
+        <img src="{{ item.image_url }}" alt="Image actuelle">
+        <span class="image-preview__label">Image actuelle — sera remplacée si vous en choisissez une nouvelle</span>
+      </div>
+      {% endif %}
+
+      <div class="upload-zone">
+        <input type="file" name="image_url" id="imageInput" accept="image/*" onchange="previewImage(this)">
+        <div class="upload-zone__content" id="uploadContent">
+          <span class="upload-zone__icon">🖼️</span>
+          <span class="upload-zone__text">Cliquez ou glissez une image ici</span>
+          <span class="upload-zone__hint">PNG, JPG, WEBP — max 5 Mo</span>
+        </div>
+        <img id="uploadPreview" src="" alt="" style="display:none; width:100%; border-radius:10px; margin-top:8px;">
+      </div>
+
+      <p style="font-size:0.75rem; color:var(--text-muted); margin-top:8px; text-align:center;">— ou collez une URL —</p>
+
+      <input type="url" name="image_url_text"
+             placeholder="https://images.unsplash.com/...">
+      <span class="form-hint">Laissez vide pour conserver l'image existante</span>
+    </div>
+
+    <!-- ─── EXTRAIT ───────────────────────────────────────── -->
     <div class="form-group">
       <label>Extrait (résumé court)</label>
-      <textarea name="excerpt" rows="3" placeholder="Un court résumé qui apparaîtra sur la carte...">{{ item.excerpt if item else '' }}</textarea>
+      <textarea name="excerpt" rows="3"
+                placeholder="Un court résumé qui apparaîtra sur la carte...">{{ item.excerpt if item else '' }}</textarea>
+      <span class="form-hint">Idéalement 1 à 2 phrases — affiché sous le titre sur la carte</span>
     </div>
+
+    <!-- ─── CONTENU ───────────────────────────────────────── -->
     <div class="form-group">
-      <label>Contenu de l'article (HTML supporté)</label>
-      <textarea name="content" rows="20" placeholder="<p>Votre article...</p>">{{ item.content if item else '' }}</textarea>
-      <p class="editor-note">💡 Vous pouvez utiliser du HTML : &lt;p&gt;, &lt;h2&gt;, &lt;h3&gt;, &lt;blockquote&gt;, &lt;strong&gt;, &lt;em&gt;</p>
+      <label>Contenu de l'article</label>
+
+      <div class="tab-btns">
+        <button type="button" class="tab-btn active" onclick="setMode('texte', this)">✦ Texte libre</button>
+        <button type="button" class="tab-btn" onclick="setMode('html', this)">⟨/⟩ HTML</button>
+      </div>
+
+      <textarea name="content" id="contentArea" rows="22"
+                placeholder="Écrivez votre article ici...&#10;&#10;Séparez vos paragraphes par une ligne vide.&#10;Utilisez **texte** pour le gras, *texte* pour l'italique.&#10;--- pour un séparateur.">{{ item.content if item else '' }}</textarea>
+
+      <p class="editor-note" id="editorNote">
+        💡 <strong>Texte libre</strong> — Séparations de paragraphes par ligne vide · <code>**gras**</code> · <code>*italique*</code> · <code>---</code> pour séparateur · <code>![alt](url)</code> pour image inline
+      </p>
     </div>
+
+    <!-- ─── PUBLICATION ───────────────────────────────────── -->
     <div class="form-group">
       <div class="checkbox-wrap">
-        <input type="checkbox" name="is_published" id="pub" {% if not item or item.is_published %}checked{% endif %}>
+        <input type="checkbox" name="is_published" id="pub"
+               {% if not item or item.is_published %}checked{% endif %}>
         <label for="pub">Publier immédiatement (décochez pour sauvegarder en brouillon)</label>
       </div>
     </div>
+
     <div style="display:flex; gap:12px; margin-top:8px;">
-      <button type="submit" class="btn btn-gold">{% if item %}💾 Enregistrer{% else %}✦ Publier l'article{% endif %}</button>
+      <button type="submit" class="btn btn-gold">
+        {% if item %}💾 Enregistrer{% else %}✦ Publier l'article{% endif %}
+      </button>
       <a href="{{ url_for('admin.articles') }}" class="btn btn-ghost">Annuler</a>
     </div>
+
   </form>
 </div>
+
+<script>
+/* ── Aperçu image upload ── */
+function previewImage(input) {
+  const preview = document.getElementById('uploadPreview');
+  const content = document.getElementById('uploadContent');
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      preview.src = e.target.result;
+      preview.style.display = 'block';
+      content.style.display = 'none';
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+/* ── Switch mode éditeur ── */
+const notes = {
+  texte: '💡 <strong>Texte libre</strong> — Séparations de paragraphes par ligne vide · <code>**gras**</code> · <code>*italique*</code> · <code>---</code> pour séparateur · <code>![alt](url)</code> pour image inline',
+  html:  '💡 <strong>Mode HTML</strong> — Utilisez &lt;p&gt;, &lt;h2&gt;, &lt;h3&gt;, &lt;blockquote&gt;, &lt;strong&gt;, &lt;em&gt;, &lt;img src="..."&gt;'
+};
+
+function setMode(mode, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('editorNote').innerHTML = notes[mode];
+  const area = document.getElementById('contentArea');
+  area.placeholder = mode === 'texte'
+    ? 'Écrivez votre article ici...\n\nSéparez vos paragraphes par une ligne vide.\nUtilisez **texte** pour le gras, *texte* pour l\'italique.\n--- pour un séparateur.'
+    : '<p>Votre article...</p>\n<h2>Un titre de section</h2>\n<blockquote>Une citation inspirante</blockquote>';
+}
+</script>
+
 {% endblock %}
