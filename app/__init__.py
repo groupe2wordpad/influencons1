@@ -13,28 +13,14 @@ migrate = Migrate()
 
 def create_app():
     app = Flask(__name__)
-
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key')
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///influencons.db')
     if app.config['SQLALCHEMY_DATABASE_URI'].startswith('postgres://'):
         app.config['SQLALCHEMY_DATABASE_URI'] = app.config['SQLALCHEMY_DATABASE_URI'].replace('postgres://', 'postgresql://', 1)
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max upload
+    app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
     db.init_app(app)
-    with app.app_context():
-        # Migration automatique des colonnes manquantes
-        from sqlalchemy import text
-        try:
-            with db.engine.connect() as conn:
-                conn.execute(text("ALTER TABLE defis ADD COLUMN IF NOT EXISTS link VARCHAR(255)"))
-                conn.execute(text("ALTER TABLE defis ADD COLUMN IF NOT EXISTS image_url VARCHAR(255)"))
-                conn.execute(text("ALTER TABLE solidarite_action ADD COLUMN IF NOT EXISTS image_url VARCHAR(255)"))
-                conn.commit()
-        except Exception as e:
-            print(f"Migration: {e}")
-    
-    return app
     login_manager.init_app(app)
     migrate.init_app(app, db)
 
@@ -42,6 +28,7 @@ def create_app():
     login_manager.login_message = 'Veuillez vous connecter pour accéder à cette page.'
 
     from .models import User
+
     @login_manager.user_loader
     def load_user(user_id):
         return User.query.get(int(user_id))
@@ -53,10 +40,19 @@ def create_app():
 
     with app.app_context():
         db.create_all()
+        # ── Migration colonnes manquantes ──
+        from sqlalchemy import text
+        try:
+            with db.engine.connect() as conn:
+                conn.execute(text("ALTER TABLE defis ADD COLUMN IF NOT EXISTS link VARCHAR(255)"))
+                conn.execute(text("ALTER TABLE defis ADD COLUMN IF NOT EXISTS image_url VARCHAR(255)"))
+                conn.execute(text("ALTER TABLE solidarite_action ADD COLUMN IF NOT EXISTS image_url VARCHAR(255)"))
+                conn.commit()
+        except Exception as e:
+            print(f"Migration: {e}")
         _create_admin()
 
-    return app
-
+    return app  # ← ici à la fin, pas avant !
 
 def _create_admin():
     from .models import User
