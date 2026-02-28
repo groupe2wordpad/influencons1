@@ -1,48 +1,164 @@
 {% extends 'admin/base.html' %}
 {% block page_title %}{% if item %}Modifier l'action{% else %}Nouvelle action de solidarité{% endif %}{% endblock %}
 {% block topbar_actions %}<a href="{{ url_for('admin.solidarite') }}" class="btn btn-ghost">← Retour</a>{% endblock %}
+
+{% block extra_css %}
+<style>
+  .form-hint {
+    display: block; font-size: 0.72rem;
+    color: var(--text-muted, #7a6a99);
+    margin-top: 4px; letter-spacing: 0.03em;
+  }
+  .image-preview {
+    position: relative; margin-bottom: 12px;
+    border-radius: 12px; overflow: hidden;
+    border: 1px solid rgba(201,168,76,0.2);
+    max-height: 240px;
+  }
+  .image-preview img {
+    width: 100%; max-height: 240px;
+    object-fit: cover; display: block;
+  }
+  .image-preview__label {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: rgba(30,17,64,0.6);
+    color: rgba(255,255,255,0.8);
+    font-size: 0.65rem; letter-spacing: 0.15em;
+    text-transform: uppercase; text-align: center;
+    padding: 6px;
+  }
+  .upload-zone {
+    border: 2px dashed rgba(201,168,76,0.3);
+    border-radius: 12px; padding: 1.5rem;
+    text-align: center; cursor: pointer;
+    transition: all .3s; background: rgba(201,168,76,0.03);
+    position: relative;
+  }
+  .upload-zone:hover {
+    border-color: rgba(201,168,76,0.6);
+    background: rgba(201,168,76,0.06);
+  }
+  .upload-zone input[type="file"] {
+    position: absolute; inset: 0;
+    opacity: 0; cursor: pointer; width: 100%; height: 100%;
+  }
+  .upload-zone__content {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 4px; pointer-events: none;
+  }
+  .upload-zone__icon { font-size: 1.8rem; }
+  .upload-zone__text { font-size: 0.85rem; color: var(--text-mid, #3d2d5c); font-weight: 500; }
+  .upload-zone__hint { font-size: 0.72rem; color: var(--text-muted, #7a6a99); }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="form-card">
-  <form method="POST">
+  <form method="POST" enctype="multipart/form-data">
+
+    <!-- ─── TITRE ──────────────────────────────────────────── -->
     <div class="form-group">
       <label>Titre de l'action *</label>
-      <input type="text" name="title" value="{{ item.title if item else '' }}" required placeholder="Lumière pour Abidjan...">
+      <input type="text" name="title"
+             value="{{ item.title if item else '' }}"
+             required placeholder="Lumière pour Abidjan...">
     </div>
+
+    <!-- ─── DESCRIPTION ───────────────────────────────────── -->
     <div class="form-group">
       <label>Description</label>
-      <textarea name="description" rows="4" placeholder="Décrivez cette action de solidarité...">{{ item.description if item else '' }}</textarea>
+      <textarea name="description" rows="4"
+                placeholder="Décrivez cette action de solidarité...">{{ item.description if item else '' }}</textarea>
     </div>
+
+    <!-- ─── IMAGE ─────────────────────────────────────────── -->
+    <div class="form-group">
+      <label>Image de l'action</label>
+
+      {% if item and item.image_url %}
+      <div class="image-preview">
+        <img src="{{ item.image_url }}" alt="Image actuelle">
+        <span class="image-preview__label">Image actuelle — sera remplacée si vous en choisissez une nouvelle</span>
+      </div>
+      {% endif %}
+
+      <div class="upload-zone">
+        <input type="file" name="image_url" accept="image/*" onchange="previewImage(this)">
+        <div class="upload-zone__content" id="uploadContent">
+          <span class="upload-zone__icon">🖼️</span>
+          <span class="upload-zone__text">Cliquez ou glissez une image ici</span>
+          <span class="upload-zone__hint">PNG, JPG, WEBP — max 5 Mo</span>
+        </div>
+        <img id="uploadPreview" src="" alt=""
+             style="display:none; width:100%; border-radius:10px; margin-top:8px;">
+      </div>
+
+      <p style="font-size:0.75rem; color:var(--text-muted); margin-top:8px; text-align:center;">— ou collez une URL —</p>
+
+      <input type="url" name="image_url_text"
+             placeholder="https://... (URL d'une image en ligne)">
+      <span class="form-hint">Laissez vide pour conserver l'image existante</span>
+    </div>
+
+    <!-- ─── PROGRESSION & ICÔNE ───────────────────────────── -->
     <div class="form-grid">
       <div class="form-group">
         <label>Progression (%)</label>
-        <input type="number" name="progress" min="0" max="100" value="{{ item.progress if item else 0 }}" placeholder="67">
+        <input type="number" name="progress" min="0" max="100"
+               value="{{ item.progress if item else 0 }}" placeholder="67">
+        <span class="form-hint">0 à 100 — affiché comme barre de progression</span>
       </div>
       <div class="form-group">
         <label>Type d'icône</label>
         <select name="icon_type">
           <option value="light" {% if item and item.icon_type == 'light' %}selected{% endif %}>🕯️ Lumière</option>
           <option value="hands" {% if item and item.icon_type == 'hands' %}selected{% endif %}>🤝 Mains</option>
-          <option value="book" {% if item and item.icon_type == 'book' %}selected{% endif %}>📖 Livre</option>
+          <option value="book"  {% if item and item.icon_type == 'book'  %}selected{% endif %}>📖 Livre</option>
           <option value="heart" {% if item and item.icon_type == 'heart' %}selected{% endif %}>💛 Cœur</option>
         </select>
       </div>
     </div>
+
+    <!-- ─── OPTIONS ───────────────────────────────────────── -->
     <div class="form-group">
       <div class="checkbox-wrap">
-        <input type="checkbox" name="is_featured" id="feat" {% if item and item.is_featured %}checked{% endif %}>
-        <label for="feat">Mise en avant (affichée en pleine largeur avec section bénévoles)</label>
+        <input type="checkbox" name="is_featured" id="feat"
+               {% if item and item.is_featured %}checked{% endif %}>
+        <label for="feat">Mise en avant (affichée en priorité)</label>
       </div>
     </div>
     <div class="form-group">
       <div class="checkbox-wrap">
-        <input type="checkbox" name="is_active" id="active" {% if not item or item.is_active %}checked{% endif %}>
+        <input type="checkbox" name="is_active" id="active"
+               {% if not item or item.is_active %}checked{% endif %}>
         <label for="active">Action active (visible sur le site)</label>
       </div>
     </div>
+
     <div style="display:flex; gap:12px;">
-      <button type="submit" class="btn btn-gold">{% if item %}💾 Enregistrer{% else %}✦ Créer l'action{% endif %}</button>
+      <button type="submit" class="btn btn-gold">
+        {% if item %}💾 Enregistrer{% else %}✦ Créer l'action{% endif %}
+      </button>
       <a href="{{ url_for('admin.solidarite') }}" class="btn btn-ghost">Annuler</a>
     </div>
+
   </form>
 </div>
+
+<script>
+function previewImage(input) {
+  const preview = document.getElementById('uploadPreview');
+  const content = document.getElementById('uploadContent');
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      preview.src = e.target.result;
+      preview.style.display = 'block';
+      content.style.display = 'none';
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+</script>
+
 {% endblock %}
